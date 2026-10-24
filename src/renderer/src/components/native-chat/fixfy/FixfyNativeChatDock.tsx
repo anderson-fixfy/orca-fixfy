@@ -1,4 +1,5 @@
 import type { NativeChatMessage } from '../../../../../shared/native-chat-types'
+import { FixfyExpandLayer } from './FixfyExpandLayer'
 import { FixfyPanel } from './FixfyPanel'
 
 /** Everything Fixfy adds above the composer; the structured session spreads its props and controller here. */
@@ -10,11 +11,14 @@ export function FixfyNativeChatDock(props: {
 }): React.JSX.Element {
   const { sessionId, messages, isWorking, isVisible } = props
   return (
-    <FixfyPanel
-      sessionId={sessionId}
-      messages={messages}
-      isWorking={isWorking}
-      isVisible={isVisible}
-    />
+    <>
+      <FixfyExpandLayer />
+      <FixfyPanel
+        sessionId={sessionId}
+        messages={messages}
+        isWorking={isWorking}
+        isVisible={isVisible}
+      />
+    </>
   )
 }
