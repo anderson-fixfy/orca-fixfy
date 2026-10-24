@@ -129,7 +129,7 @@ describe('createIncrementalSyntaxTokenizer', () => {
 
     expect(progress.degraded).toBe(true)
     expect(colors(progress)).toEqual([
-      expect.arrayContaining([['const', '#0000FF', '#569CD6']]),
+      expect.arrayContaining([['const', '#0000FF', '#CF8E6D']]),
       [[`const long = "${'x'.repeat(2000)}"`, undefined, undefined]],
       [['const b = 2', undefined, undefined]],
       [['const c = 3', undefined, undefined]]

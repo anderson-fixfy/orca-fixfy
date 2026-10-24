@@ -46,6 +46,27 @@ describe('updater', () => {
     expect(powerMonitorOnMock).not.toHaveBeenCalled()
   })
 
+  it('never checks for updates from a local build, which is rebuilt from source', async () => {
+    appMock.getVersion.mockReturnValue('1.4.239-local.1792864792.eabec4de25f')
+    const mainWindow = { webContents: { send: vi.fn() } }
+
+    const { setupAutoUpdater, checkForUpdatesFromMenu, getRemoteServerUpdateSupport } =
+      await loadUpdaterModule()
+
+    setupAutoUpdater(mainWindow as never, { getLastUpdateCheckAt: () => 0 })
+    appMock.emit('browser-window-focus')
+    checkForUpdatesFromMenu()
+    await vi.advanceTimersByTimeAsync(25 * 60 * 60 * 1000)
+
+    expect(autoUpdaterMock.setFeedURL).not.toHaveBeenCalled()
+    expect(autoUpdaterMock.checkForUpdates).not.toHaveBeenCalled()
+    expect(fetchNudgeMock).not.toHaveBeenCalled()
+    expect(getRemoteServerUpdateSupport()).toMatchObject({
+      automatic: false,
+      reason: 'unpackaged-build'
+    })
+  })
+
   it('runs a startup check immediately when the last background check is stale', async () => {
     const mainWindow = { webContents: { send: vi.fn() } }
     const setLastUpdateCheckAt = vi.fn()
