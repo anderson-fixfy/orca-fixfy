@@ -51,6 +51,8 @@ import { useAppStore } from '../../store'
 import { structuredAgentLabel } from '@/lib/structured-agent-session-launch-label'
 import { useNativeChatStructuredComposerTransport } from './use-native-chat-structured-composer-transport'
 import { NativeChatStructuredGoalStrip } from './NativeChatStructuredGoalStrip'
+/* oxlint-disable max-lines -- montagem da Fixfy (PLN-025/R10.4) */
+import { FixfyNativeChatDock } from './fixfy/FixfyNativeChatDock'
 import { nativeChatPaneHeader } from './NativeChatPaneHeader'
 import { structuredAgentSessionReadFailureNotice } from './structured-agent-session-read-failure-notice'
 import { useStructuredAgentSessionDeliveryNotices } from './use-structured-agent-session-delivery-notices'
@@ -392,6 +394,7 @@ export function NativeChatStructuredSession(
           ) : null}
           {prompt ? null : <NativeChatStructuredAsyncQuestion {...asyncQuestion} />}
           {composerShown && <NativeChatInstallSlot slot={install.slot} agentLabel={agentLabel} />}
+          <FixfyNativeChatDock {...controller} {...props} />
           {composerShown ? (
             <NativeChatComposer
               ref={composerRef}
