@@ -22,6 +22,7 @@ import { installMonacoDiffEditorDisposalGuard } from './monaco-diff-editor-dispo
 import { installMonacoPeekReferencesPreviewOptions } from './monaco-peek-preview-options'
 import { installMonacoContextMenuPaste } from '@/components/editor/install-monaco-context-menu-paste'
 import { runMonacoSetupSteps } from './monaco-setup-steps'
+import { ISLANDS_DARK_MONACO_THEME, ISLANDS_DARK_THEME_NAME } from './islands-dark-theme'
 
 globalThis.MonacoEnvironment = {
   getWorker(_workerId, label) {
@@ -81,6 +82,10 @@ monacoTS.javascriptDefaults.setCompilerOptions({
 })
 
 runMonacoSetupSteps([
+  [
+    'Islands Dark theme',
+    () => monaco.editor.defineTheme(ISLANDS_DARK_THEME_NAME, ISLANDS_DARK_MONACO_THEME)
+  ],
   ['Vue language registration', () => registerVueLanguage(monaco)],
   ['Svelte language registration', () => registerSvelteLanguage(monaco)],
   ['Astro language registration', () => registerAstroLanguage(monaco)],

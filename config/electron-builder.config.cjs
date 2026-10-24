@@ -87,6 +87,10 @@ const isWinDaily = process.env.ORCA_WIN_DAILY === '1'
 const isWinAdhoc = process.env.ORCA_WIN_ADHOC === '1'
 const isWinDevChannel = isWinHourly || isWinDaily || isWinAdhoc
 const isMacRelease = process.env.ORCA_MAC_RELEASE === '1' || isMacHourly || isMacDaily || isMacAdhoc
+// Why: a local build signs with the identity the caller names or ad hoc; one discovered in the
+// Keychain stalls an unattended build on the Keychain access prompt.
+const macLocalSigningIdentity = isMacRelease ? null : process.env.CSC_NAME || '-'
+const isMacHardenedRuntime = isMacRelease || macLocalSigningIdentity !== '-'
 const isLinuxArm64Release = process.env.ORCA_LINUX_ARM64_RELEASE === '1'
 const localBuildVersion =
   isMacRelease || isWinDevChannel ? undefined : process.env.ORCA_LOCAL_BUILD_VERSION
@@ -648,17 +652,16 @@ module.exports = {
     entitlements: 'resources/build/entitlements.mac.plist',
     entitlementsInherit: 'resources/build/entitlements.mac.plist',
     ...(isMacRelease ? { sign: resolve(__dirname, 'scripts/sign-mac-app.mjs') } : {}),
+    ...(macLocalSigningIdentity ? { identity: macLocalSigningIdentity } : {}),
     signIgnore: [
       ...bundledRipgrepMacSignIgnore,
       ...orcadTemplateMacSignIgnore,
       ...macTerminalHostSignIgnore
     ],
     extendInfo: macUsageDescriptions,
-    // Why: local macOS validation builds should launch without Apple release
-    // credentials. Hardened runtime + notarization stay enabled only on the
-    // explicit release path so production artifacts remain strict while dev
-    // artifacts do not fail with broken ad-hoc launch behavior.
-    hardenedRuntime: isMacRelease,
+    // Why: an ad-hoc local build fails library validation under hardened runtime;
+    // a local build signed by a named identity keeps it, like a release.
+    hardenedRuntime: isMacHardenedRuntime,
     // Why dev builds notarize too, despite the ~10min notary round trip: TCC
     // anchors a notarized Developer ID app's permission grants on identifier +
     // team, which is cdhash-independent and so survives an update. Without a
@@ -861,15 +864,9 @@ async function signMacComputerUseHelper(helperAppPath, packager) {
     }
     return
   }
-  const codeSigningInfo =
-    isMacRelease && process.env.CSC_LINK && packager?.codeSigningInfo?.value
-      ? await packager.codeSigningInfo.value
-      : null
   const identity =
     process.env.ORCA_COMPUTER_MACOS_SIGN_IDENTITY ??
-    process.env.CSC_NAME ??
-    findInstalledMacSigningIdentity(codeSigningInfo?.keychainFile) ??
-    (isMacRelease ? null : '-')
+    (await resolveMacHelperSigningIdentity(packager))
   if (!identity) {
     throw new Error('Missing signing identity for Orca Computer Use helper app')
   }
@@ -922,21 +919,17 @@ async function signMacStandaloneHelper(helperPath, helperName, packager, entitle
     }
     return
   }
-  const codeSigningInfo =
-    isMacRelease && process.env.CSC_LINK && packager?.codeSigningInfo?.value
-      ? await packager.codeSigningInfo.value
-      : null
-  const identity =
-    process.env.CSC_NAME ??
-    findInstalledMacSigningIdentity(codeSigningInfo?.keychainFile) ??
-    (isMacRelease ? null : '-')
+  const identity = await resolveMacHelperSigningIdentity(packager)
   if (!identity) {
     throw new Error(`Missing signing identity for ${helperName} helper`)
   }
   // Why: nested executables must be signed before the outer app bundle is sealed.
   const args = ['--force', '--sign', identity]
+  if (isMacHardenedRuntime) {
+    args.push('--options', 'runtime')
+  }
   if (isMacRelease) {
-    args.push('--options', 'runtime', '--timestamp')
+    args.push('--timestamp')
   }
   if (entitlements) {
     args.push('--entitlements', entitlements)
@@ -948,17 +941,30 @@ async function signMacStandaloneHelper(helperPath, helperName, packager, entitle
 
 function codesignArgs(identity, targetPath) {
   const args = ['--force', '--deep', '--sign', identity]
-  if (isMacRelease) {
+  if (isMacHardenedRuntime) {
     args.push(
       '--options',
       'runtime',
-      '--timestamp',
       '--entitlements',
       resolve(__dirname, '../resources/build/entitlements.computer-use.mac.plist')
     )
   }
+  if (isMacRelease) {
+    args.push('--timestamp')
+  }
   args.push(targetPath)
   return args
+}
+
+async function resolveMacHelperSigningIdentity(packager) {
+  if (macLocalSigningIdentity) {
+    return macLocalSigningIdentity
+  }
+  const codeSigningInfo =
+    process.env.CSC_LINK && packager?.codeSigningInfo?.value
+      ? await packager.codeSigningInfo.value
+      : null
+  return process.env.CSC_NAME ?? findInstalledMacSigningIdentity(codeSigningInfo?.keychainFile)
 }
 
 function findInstalledMacSigningIdentity(keychainFile) {
@@ -975,9 +981,6 @@ function findInstalledMacSigningIdentity(keychainFile) {
       output.match(/"([^"]*Apple Distribution:[^"]+)"/)
     if (releaseMatch?.[1]) {
       return releaseMatch[1]
-    }
-    if (!isMacRelease) {
-      return output.match(/"([^"]*Apple Development:[^"]+)"/)?.[1] ?? null
     }
   } catch {}
   return null

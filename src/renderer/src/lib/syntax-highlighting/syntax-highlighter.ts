@@ -8,6 +8,7 @@ import {
   type TextMateCore
 } from './textmate-core'
 import { withVueTemplateInjections } from './vue-template-injections'
+import { ISLANDS_DARK_SHIKI_THEME, ISLANDS_DARK_THEME_NAME } from '../islands-dark-theme'
 
 export type SyntaxToken = {
   content: string
@@ -41,7 +42,7 @@ export type SyntaxHighlightResult = {
 }
 
 /**
- * Colors `code` (one or more lines) in VS Code's Light+ and Dark+ themes,
+ * Colors `code` (one or more lines) in VS Code's Light+ and Android Studio's Islands Dark themes,
  * continuing from `state` when that is what the call for the text just before
  * `code` returned.
  */
@@ -53,7 +54,7 @@ export type SyntaxHighlighter = (
 /** `unsupported`: no grammar for the language. `failed`: the grammar could not load. */
 export type SyntaxLanguageStatus = 'ready' | 'unsupported' | 'failed'
 
-const THEMES = { light: 'light-plus', dark: 'dark-plus' } as const
+const THEMES = { light: 'light-plus', dark: ISLANDS_DARK_THEME_NAME } as const
 const MAX_LOAD_ATTEMPTS = 3
 const LOAD_RETRY_DELAY_MS = 2000
 // Arbitrary fence labels must not grow the table without limit.
@@ -87,7 +88,7 @@ let loadFailureLogged = false
 function loadHighlighter(): Promise<TextMateCore> {
   highlighterPromise ??= createTextMateCore([
     import('shiki/themes/light-plus.mjs'),
-    import('shiki/themes/dark-plus.mjs')
+    ISLANDS_DARK_SHIKI_THEME
   ]).catch((error: unknown) => {
     highlighterPromise = undefined
     throw error
@@ -229,7 +230,7 @@ function createSyntaxHighlighter(
         text,
         state?.stacks?.light ?? INITIAL
       )
-      // A line Light+ gave up on stays plain, so Dark+ need not try it.
+      // A line Light+ gave up on stays plain, so the dark theme need not try it.
       const dark = tokenizeWithTheme(
         highlighter,
         grammar,

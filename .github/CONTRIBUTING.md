@@ -56,8 +56,9 @@ needed. Things to know:
   matches.
 
 Ordinary installs include native optional dependencies for the current OS and CPU only.
-Before a cross-architecture build (including `pnpm build:mac`, which produces both x64 and
-arm64 artifacts by default), run `pnpm install:release` to add the other CPU's variants.
+Before a cross-architecture build, run `pnpm install:release` to add the other CPU's variants.
+`pnpm build:mac` packages only the host CPU's `.app`, signed ad hoc or with the identity named
+in `CSC_NAME` (hardened runtime on).
 
 Linux `pnpm build`, `pnpm build:native`, and Linux packaging require a running Docker
 daemon to build the clipboard helper against Ubuntu 20.04 rather than the host's

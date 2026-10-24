@@ -28,19 +28,52 @@ export function getLocalBuildIdentity() {
   }
 }
 
+// Why the whole chain lives here: mobile/ is its own pnpm project the root install leaves empty,
+// and the helper builds must see the same signing identity electron-builder uses.
+export function createMacLocalBuildSteps(arch) {
+  if (arch !== 'arm64' && arch !== 'x64') {
+    throw new Error(`Unsupported macOS build architecture: ${arch}`)
+  }
+  return [
+    ['pnpm', ['--dir', 'mobile', 'install', '--frozen-lockfile']],
+    ['pnpm', ['run', 'build:desktop']],
+    ['pnpm', ['run', 'build:computer-macos']],
+    ['pnpm', ['run', 'build:keyboard-layout-macos']],
+    ['pnpm', ['run', 'build:notification-status-macos']],
+    ['pnpm', ['run', 'ensure:electron-runtime']],
+    // Why the host slice only: the other slice's native variants are not installed locally.
+    [
+      'pnpm',
+      [
+        'exec',
+        'electron-builder',
+        '--config',
+        'config/electron-builder.config.cjs',
+        '--mac',
+        'dir',
+        `--${arch}`
+      ]
+    ]
+  ]
+}
+
+export function createMacLocalBuildEnv(env, identity) {
+  return {
+    ...env,
+    ORCA_BUILD_COMMIT: identity.commit,
+    ORCA_LOCAL_BUILD_VERSION: identity.version,
+    // Why: without it the helper build discovers a Keychain identity and stalls on its prompt.
+    ORCA_COMPUTER_MACOS_SIGN_IDENTITY:
+      env.ORCA_COMPUTER_MACOS_SIGN_IDENTITY ?? (env.CSC_NAME || '-')
+  }
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) {
   const identity = getLocalBuildIdentity()
-  console.log(`[build:mac] local update version ${identity.version}`)
-  execFileSync(
-    process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-    ['exec', 'electron-builder', '--config', 'config/electron-builder.config.cjs', '--mac'],
-    {
-      env: {
-        ...process.env,
-        ORCA_BUILD_COMMIT: identity.commit,
-        ORCA_LOCAL_BUILD_VERSION: identity.version
-      },
-      stdio: 'inherit'
-    }
-  )
+  const env = createMacLocalBuildEnv(process.env, identity)
+  console.log(`[build:mac] local version ${identity.version}`)
+  console.log(`[build:mac] signing identity ${env.CSC_NAME || '- (ad hoc)'}`)
+  for (const [command, args] of createMacLocalBuildSteps(process.arch)) {
+    execFileSync(command, args, { env, stdio: 'inherit' })
+  }
 }

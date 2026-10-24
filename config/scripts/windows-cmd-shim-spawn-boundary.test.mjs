@@ -33,8 +33,7 @@ const WINDOWS_SHIM_SPAWN_ALLOWLIST = [
   'config/scripts/live-remote-freeze-rpc.mjs',
   'config/scripts/pty-transcript-secret-scan.test.mjs',
   'config/scripts/remote-agent-session-authority-repro.mjs',
-  // Platform-local build paths; the win32 branch is dead code on both.
-  'config/scripts/build-mac-local.mjs',
+  // Platform-local build path and its test; the win32 branch is dead code.
   'config/scripts/build-linux-local.mjs',
   'config/scripts/build-linux-local.test.mjs',
   // Benchmarks, repros and e2e drivers — developer-invoked or Linux-only in CI.

@@ -53,7 +53,7 @@ describe('highlightSyntax', () => {
     const result = (await highlighterFor('ts'))('const answer = 42')
 
     expect(result.outcome).toBe('ok')
-    expect(find(result, 'const')).toMatchObject({ light: '#0000FF', dark: '#569CD6' })
+    expect(find(result, 'const')).toMatchObject({ light: '#0000FF', dark: '#CF8E6D' })
     expect(find(result, '=')).toMatchObject({ light: undefined, dark: undefined })
     expect(result.lines[0].map((token) => token.content).join('')).toBe('const answer = 42')
   })
@@ -74,7 +74,7 @@ describe('highlightSyntax', () => {
 
     expect(colors([...head.lines, ...tail.lines])).toEqual(colors(whole.lines))
     // After the multi-line f-string, `with` is a keyword again.
-    expect(find(whole, 'with')).toMatchObject({ dark: '#C586C0' })
+    expect(find(whole, 'with')).toMatchObject({ dark: '#CF8E6D' })
   })
 
   it('reports formatting per theme', async () => {
@@ -92,8 +92,8 @@ describe('highlightSyntax', () => {
     await highlighterFor('markdown')
     const result = (await highlighterFor('vue'))(code)
 
-    expect(find(result, 'format')).toMatchObject({ dark: '#DCDCAA' })
-    expect(find(result, 'total')).toMatchObject({ dark: '#9CDCFE' })
+    expect(find(result, 'format')).toMatchObject({ dark: '#56A8F5' })
+    expect(find(result, 'total')).toMatchObject({ light: '#001080' })
   })
 
   it('leaves a line too long to color plain, along with every line after it', async () => {
@@ -103,7 +103,7 @@ describe('highlightSyntax', () => {
     const result = typescript(code)
 
     expect(result.outcome).toBe('degraded')
-    expect(find(result, 'const')).toMatchObject({ dark: '#569CD6' })
+    expect(find(result, 'const')).toMatchObject({ dark: '#CF8E6D' })
     expect(result.lines[1]).toEqual([expect.objectContaining({ dark: undefined })])
     expect(result.lines[2]).toEqual([
       {
