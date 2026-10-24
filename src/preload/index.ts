@@ -69,6 +69,7 @@ import { openCodeUsageApi } from './api/open-code-usage-bridge'
 import { museUsageApi } from './api/muse-usage-bridge'
 import { aiVaultApi } from './api/ai-vault-bridge'
 import { nativeChatApi } from './api/native-chat-bridge'
+import { fixfyPanelApi } from './api/fixfy-panel-bridge'
 import { runtimeApi } from './api/runtime-bridge'
 import { runtimeEnvironmentsApi } from './api/runtime-environments-bridge'
 import { rateLimitsApi } from './api/rate-limits-bridge'
@@ -170,6 +171,7 @@ const api = {
   museUsage: museUsageApi,
   aiVault: aiVaultApi,
   nativeChat: nativeChatApi,
+  fixfyPanel: fixfyPanelApi,
   runtime: runtimeApi,
   runtimeEnvironments: runtimeEnvironmentsApi,
   rateLimits: rateLimitsApi,
