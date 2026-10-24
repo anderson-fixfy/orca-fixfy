@@ -1,3 +1,6 @@
+# Fixfy: worktrees das sessões de tarefa
+.worktrees/
+
 # Build artifacts
 tsconfig.*.tsbuildinfo
 
