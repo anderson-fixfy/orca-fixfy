@@ -1,10 +1,7 @@
 import { createNativeChatPastedTextHistory } from './native-chat-pasted-text-history'
 import { resolveNativeChatPastedText } from './native-chat-composer-pasted-text-references'
 import { NativeChatPastedTextScopeProvider } from './native-chat-pasted-text-state'
-import {
-  readNativeChatDraftDocument,
-  writeNativeChatDraftDocument
-} from './native-chat-draft-cache'
+import { writeNativeChatDraftDocument } from './native-chat-draft-cache'
 import {
   subscribeToNativeChatComposerDraft,
   hasUnsavedNativeChatComposerDraftChange
@@ -20,7 +17,6 @@ import {
   type RefObject
 } from 'react'
 import { EditorContent, useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import {
   fileReferenceContent,
@@ -29,12 +25,19 @@ import {
   NativeChatSkill,
   promptLeafText,
   promptText,
-  promptTextContent,
-  promptTextOffset,
-  promptTextPosition
+  promptTextContent
 } from './native-chat-prompt-document'
 import type { NativeChatComposerInput } from './native-chat-composer-input'
 import { NativeChatImageRowProvider } from './NativeChatImageReferencePill'
+import { useAppStore } from '@/store'
+import { createRichMarkdownEditorCodec } from '../editor/rich-markdown-source-transport'
+import {
+  initialPromptContent,
+  promptModeCoordinates,
+  promptModeExtensions,
+  replacePromptDocument,
+  storedPromptDocument
+} from './native-chat-prompt-editor-mode'
 
 type Props = Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'onSelect'> & {
   scopeKey?: string
@@ -65,49 +68,44 @@ export function NativeChatPromptEditor({
   const historyPaths = useMemo(() => createNativeChatPastedTextHistory(scopeKey ?? ''), [scopeKey])
   const placeholderRef = useRef(placeholder)
   placeholderRef.current = placeholder
+  const initialValueRef = useRef(initialValue)
+  initialValueRef.current = initialValue
+  const markdown = useAppStore((state) => state.settings?.nativeChatMarkdownComposer === true)
+  const codec = useMemo(() => createRichMarkdownEditorCodec(), [])
+  const extensions = useMemo(
+    () => [
+      ...promptModeExtensions(markdown, codec),
+      NativeChatSkill,
+      NativeChatFileReference,
+      NativeChatImageReference,
+      // A disabled box still says why it is disabled, as the plain text box's placeholder does.
+      Placeholder.configure({
+        placeholder: () => placeholderRef.current,
+        showOnlyWhenEditable: false
+      })
+    ],
+    [codec, markdown]
+  )
+  const initial = useMemo(
+    () => initialPromptContent(extensions, markdown, codec, scopeKey, initialValueRef.current),
+    [codec, extensions, markdown, scopeKey]
+  )
   const editor = useEditor(
     {
-      extensions: [
-        StarterKit.configure({
-          blockquote: false,
-          bold: false,
-          bulletList: false,
-          code: false,
-          codeBlock: false,
-          dropcursor: false,
-          gapcursor: false,
-          heading: false,
-          horizontalRule: false,
-          italic: false,
-          link: false,
-          listItem: false,
-          orderedList: false,
-          strike: false,
-          underline: false,
-          trailingNode: false
-        }),
-        NativeChatSkill,
-        NativeChatFileReference,
-        NativeChatImageReference,
-        // A disabled box still says why it is disabled, as the plain text box's placeholder does.
-        Placeholder.configure({
-          placeholder: () => placeholderRef.current,
-          showOnlyWhenEditable: false
-        })
-      ],
-      content:
-        (scopeKey && readNativeChatDraftDocument(scopeKey, initialValue)) ||
-        promptTextContent(initialValue),
+      extensions,
+      content: initial.content,
+      contentType: initial.contentType,
       editable: !disabled,
       editorProps: {
         attributes: {
           role: 'textbox',
           'aria-multiline': 'true',
           'aria-label': placeholder,
-          class: `${className ?? ''} whitespace-pre-wrap break-words [&_p]:m-0 [&_p.is-editor-empty:first-child]:before:content-[attr(data-placeholder)] [&_p.is-editor-empty:first-child]:before:text-chat-foreground-faint [&_p.is-editor-empty:first-child]:before:float-left [&_p.is-editor-empty:first-child]:before:h-0 [&_p.is-editor-empty:first-child]:before:pointer-events-none`,
+          class: `${className ?? ''} ${markdown ? 'rich-markdown-editor native-chat-markdown-composer-editor' : ''} whitespace-pre-wrap break-words [&_p]:m-0 [&_p.is-editor-empty:first-child]:before:content-[attr(data-placeholder)] [&_p.is-editor-empty:first-child]:before:text-chat-foreground-faint [&_p.is-editor-empty:first-child]:before:float-left [&_p.is-editor-empty:first-child]:before:h-0 [&_p.is-editor-empty:first-child]:before:pointer-events-none`,
           ...Object.fromEntries(Object.entries(events).filter(([key]) => key.startsWith('aria-')))
         },
-        // Clipboard input is always literal text; only the picker and attachments create pills.
+        // Clipboard input is text, read as Markdown in that mode; only the picker and attachments
+        // create pills.
         handlePaste: (view, event) => {
           if (event.defaultPrevented) {
             return true
@@ -116,17 +114,23 @@ export function NativeChatPromptEditor({
           if (text == null) {
             return false
           }
-          const content = editor?.schema.nodeFromJSON(promptTextContent(text))
+          const content = editor?.schema.nodeFromJSON(
+            promptModeCoordinates(editor, markdown, codec).content(text)
+          )
           if (!content) {
             return false
           }
           view.dispatch(view.state.tr.replaceSelection(new Slice(content.content, 1, 1)))
           return true
         },
-        clipboardTextSerializer: (slice) =>
+        clipboardTextSerializer: (slice, view) =>
           resolveNativeChatPastedText(
             scopeKey ?? '',
-            slice.content.textBetween(0, slice.content.size, '\n', promptLeafText),
+            markdown && editor
+              ? promptModeCoordinates(editor, markdown, codec).text(
+                  view.state.schema.topNodeType.create(null, slice.content)
+                )
+              : slice.content.textBetween(0, slice.content.size, '\n', promptLeafText),
             true
           )
       },
@@ -145,7 +149,7 @@ export function NativeChatPromptEditor({
         ) {
           writeNativeChatDraftDocument(
             scopeKey,
-            promptText(current.state.doc),
+            promptModeCoordinates(current, markdown, codec).text(current.state.doc),
             current.getJSON(),
             pastedTextFiles
           )
@@ -162,8 +166,20 @@ export function NativeChatPromptEditor({
         }
       }
     },
-    []
+    [markdown]
   )
+
+  const coordinates = useMemo(
+    () => promptModeCoordinates(editor, markdown, codec),
+    [codec, editor, markdown]
+  )
+
+  useLayoutEffect(() => {
+    const value = initialValueRef.current
+    if (editor && initial.stored && coordinates.text(editor.state.doc) !== value) {
+      replacePromptDocument(editor, coordinates.content(value))
+    }
+  }, [coordinates, editor, initial.stored])
 
   useLayoutEffect(() => {
     if (!editor || !scopeKey) {
@@ -183,28 +199,28 @@ export function NativeChatPromptEditor({
       editor
         ? {
             insertText: (text) => {
-              const content = editor.schema.nodeFromJSON(promptTextContent(text))
+              const content = editor.schema.nodeFromJSON(coordinates.content(text))
               editor.view.dispatch(
                 editor.state.tr.replaceSelection(new Slice(content.content, 1, 1))
               )
             },
             get value() {
-              return promptText(editor.state.doc)
+              return coordinates.text(editor.state.doc)
             },
             set value(value: string) {
               const { doc } = editor.state
-              const old = promptText(doc)
+              const old = coordinates.text(doc)
               if (old === value) {
                 return
               }
               // A draft loaded or adopted whole keeps its skill chips: its stored document wins.
-              const stored = scopeKey ? readNativeChatDraftDocument(scopeKey, value) : undefined
+              const stored = storedPromptDocument(editor, coordinates, scopeKey, value)
               if (stored) {
                 editor.commands.setContent(stored, { emitUpdate: false })
                 return
               }
               if (!value) {
-                editor.commands.setContent(promptTextContent(''), { emitUpdate: false })
+                editor.commands.setContent(coordinates.content(''), { emitUpdate: false })
                 return
               }
               let start = 0
@@ -220,10 +236,21 @@ export function NativeChatPromptEditor({
                 end++
               }
               // A text replacement intersecting an atom replaces its entire serialized token.
-              const from = promptTextPosition(doc, start, 'before')
-              const to = promptTextPosition(doc, old.length - end, 'after')
-              start = promptTextOffset(doc, from)
-              end = old.length - promptTextOffset(doc, to)
+              const from = coordinates.position(doc, start, 'before')
+              const to = coordinates.position(doc, old.length - end, 'after')
+              start = coordinates.offset(doc, from)
+              end = old.length - coordinates.offset(doc, to)
+              if (markdown) {
+                // Markdown reads only as a whole: a change typed text cannot make is read whole.
+                const inserted = value.slice(start, value.length - end)
+                const tr = editor.state.tr.insertText(inserted, from, to)
+                if (!inserted.includes('\n') && coordinates.text(tr.doc) === value) {
+                  editor.view.dispatch(tr.setMeta('preventUpdate', true))
+                } else {
+                  editor.commands.setContent(coordinates.content(value), { emitUpdate: false })
+                }
+                return
+              }
               const content = editor.schema.nodeFromJSON(
                 promptTextContent(value.slice(start, value.length - end))
               )
@@ -240,10 +267,10 @@ export function NativeChatPromptEditor({
               editor.setEditable(!value)
             },
             get selectionStart() {
-              return promptTextOffset(editor.state.doc, editor.state.selection.from)
+              return coordinates.offset(editor.state.doc, editor.state.selection.from)
             },
             get selectionEnd() {
-              return promptTextOffset(editor.state.doc, editor.state.selection.to)
+              return coordinates.offset(editor.state.doc, editor.state.selection.to)
             },
             focus: () => {
               // Why: a blurred editor never writes its caret to the page, so focusing the element
@@ -278,13 +305,16 @@ export function NativeChatPromptEditor({
             setSelectionRange: (from, to) => {
               const { doc } = editor.state
               editor.commands.setTextSelection({
-                from: promptTextPosition(doc, from ?? 0),
-                to: promptTextPosition(doc, to ?? 0)
+                from: coordinates.position(doc, from ?? 0),
+                to: coordinates.position(doc, to ?? 0)
               })
             },
             insertSkill: (from, to, token, path) => {
               const { doc } = editor.state
-              const range = { from: promptTextPosition(doc, from), to: promptTextPosition(doc, to) }
+              const range = {
+                from: coordinates.position(doc, from),
+                to: coordinates.position(doc, to)
+              }
               editor.view.dispatch(closeHistory(editor.state.tr))
               editor
                 .chain()
@@ -329,7 +359,7 @@ export function NativeChatPromptEditor({
             }
           }
         : null,
-    [editor, scopeKey]
+    [coordinates, editor, markdown, scopeKey]
   )
   useImperativeHandle(inputRef, () => input!, [input])
 

@@ -19,6 +19,8 @@ export type NativeChatGlobalSettings = {
   nativeChatAutoName?: boolean
   /** Explicit chat provider choices; unlisted agents retain the chat launch default. */
   nativeChatProviders?: Partial<Record<TuiAgent, boolean>>
+  /** The chat composer shows its Markdown formatted; what it sends stays Markdown. Absent = off. */
+  nativeChatMarkdownComposer?: boolean
 }
 
 export const DEFAULT_NATIVE_CHAT_FONT_SIZE = 14

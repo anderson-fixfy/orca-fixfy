@@ -41,6 +41,7 @@ export function ChatBehaviorSetting({
       : []),
     entries.resumeOnRestart,
     ...(hostQueuesMessages ? [entries.queueFollowUps] : []),
+    entries.markdownComposer,
     entries.shellEnvironment
   ]
   if (!forceVisible && !matchesSettingsSearch(query, rows)) {
@@ -48,6 +49,7 @@ export function ChatBehaviorSetting({
   }
   const resumeOnRestartEnabled = settings.nativeChatResumeWorkOnRestart === true
   const queueFollowUpsEnabled = settings.nativeChatQueueFollowUps !== false
+  const markdownComposerEnabled = settings.nativeChatMarkdownComposer === true
   return (
     <section id="chat-behavior" className="space-y-3">
       <SettingsSubsectionHeader title={getChatBehaviorTitle()} />
@@ -99,6 +101,25 @@ export function ChatBehaviorSetting({
                 />
               </SearchableSetting>
             ) : null}
+            <SearchableSetting
+              {...entries.markdownComposer}
+              id={entries.markdownComposer.targetSectionId}
+              forceVisible={forceVisible}
+              className="max-w-none"
+            >
+              <SettingsSwitchRow
+                label={entries.markdownComposer.title}
+                description={entries.markdownComposer.description}
+                checked={markdownComposerEnabled}
+                ariaLabel={translate(
+                  'components.settings.nativeChat.markdownComposerToggleLabel',
+                  'Toggle Markdown preview mode'
+                )}
+                onChange={() =>
+                  updateSettings({ nativeChatMarkdownComposer: !markdownComposerEnabled })
+                }
+              />
+            </SearchableSetting>
             <SearchableSetting
               {...entries.shellEnvironment}
               id={entries.shellEnvironment.targetSectionId}

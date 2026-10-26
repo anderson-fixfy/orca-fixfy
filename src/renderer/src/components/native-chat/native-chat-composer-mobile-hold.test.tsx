@@ -17,7 +17,11 @@ vi.mock('@/i18n/i18n', () => ({
   translate: (_key: string, fallback: string) => fallback
 }))
 vi.mock('@/store', () => ({
-  useAppStore: { getState: () => ({ settings: mocks.settings }) }
+  useAppStore: Object.assign(
+    (select: (state: { settings: typeof mocks.settings }) => unknown) =>
+      select({ settings: mocks.settings }),
+    { getState: () => ({ settings: mocks.settings }) }
+  )
 }))
 vi.mock('../terminal-pane/terminal-fit-restore', () => ({
   restoreTerminalFitToDesktop: mocks.restoreTerminalFitToDesktop
