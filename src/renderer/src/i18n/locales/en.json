@@ -19680,6 +19680,12 @@
         "unconfirmed": "Couldn't confirm whether {{agent}} received Continue. Check the chat before trying again.",
         "usageLimitExplanation": "Asks the agent to continue where it left off. Use it once the limit resets."
       },
+      "usageLimitAutoResume": {
+        "resume": "Resume automatically",
+        "explanation": "Sends Continue in this chat at {{time}}, a minute after the limit resets, even with this window closed.",
+        "scheduled": "Resumes at {{time}}",
+        "cancel": "Cancel"
+      },
       "antigravitySignIn": {
         "sentence": "Antigravity isn't signed in. Sign in under <settings>Settings → Accounts → Antigravity</settings>. Then send your message again."
       },

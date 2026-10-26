@@ -19465,6 +19465,12 @@
         "unconfirmed": "Impossible de confirmer si {{agent}} a reçu Continuer. Vérifiez le chat avant de réessayer.",
         "usageLimitExplanation": "Demande à l’agent de reprendre là où il s’était arrêté. À utiliser une fois la limite réinitialisée."
       },
+      "usageLimitAutoResume": {
+        "resume": "Reprendre automatiquement",
+        "explanation": "Envoie Continuer dans ce chat à {{time}}, une minute après la réinitialisation de la limite, même si cette fenêtre est fermée.",
+        "scheduled": "Reprise à {{time}}",
+        "cancel": "Annuler"
+      },
       "rewind": {
         "unsupported": "Ce chat ne peut pas revenir à un message antérieur.",
         "historyNotPaginated": "Ce chat Codex plus ancien ne peut pas revenir à un message antérieur. Démarrez un nouveau chat pour utiliser « Revenir ici ».",

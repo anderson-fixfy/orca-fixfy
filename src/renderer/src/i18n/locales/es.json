@@ -19325,6 +19325,12 @@
         "unconfirmed": "No se pudo confirmar si {{agent}} recibió Continuar. Revisa el chat antes de volver a intentarlo.",
         "usageLimitExplanation": "Pide al agente que continúe donde lo dejó. Úsalo cuando se restablezca el límite."
       },
+      "usageLimitAutoResume": {
+        "resume": "Reanudar automáticamente",
+        "explanation": "Envía Continuar en este chat a las {{time}}, un minuto después de que se restablezca el límite, incluso con esta ventana cerrada.",
+        "scheduled": "Se reanuda a las {{time}}",
+        "cancel": "Cancelar"
+      },
       "rewind": {
         "unsupported": "Este chat no puede volver a un mensaje anterior.",
         "historyNotPaginated": "Este chat de Codex más antiguo no puede volver a un mensaje anterior. Inicia un chat nuevo para usar Rebobinar hasta aquí.",

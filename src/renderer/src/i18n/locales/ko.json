@@ -19355,6 +19355,12 @@
         "unconfirmed": "{{agent}}에 계속 요청이 전달되었는지 확인할 수 없습니다. 다시 시도하기 전에 채팅을 확인하세요.",
         "usageLimitExplanation": "중단한 곳부터 계속하도록 에이전트에 요청합니다. 한도가 초기화된 후 사용하세요."
       },
+      "usageLimitAutoResume": {
+        "resume": "자동으로 재개",
+        "explanation": "한도가 재설정되고 1분 뒤인 {{time}}에 이 창이 닫혀 있어도 이 채팅에 계속을 보냅니다.",
+        "scheduled": "{{time}}에 재개",
+        "cancel": "취소"
+      },
       "rewind": {
         "unsupported": "이 채팅은 이전 메시지로 돌아갈 수 없습니다.",
         "historyNotPaginated": "이 오래된 Codex 채팅은 이전 메시지로 돌아갈 수 없습니다. 여기로 되감기를 사용하려면 새 채팅을 시작하세요.",

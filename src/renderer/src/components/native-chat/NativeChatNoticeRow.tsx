@@ -17,6 +17,7 @@ import {
 } from '../../../../shared/native-chat-notice'
 import { useNativeChatOrcaStopView } from './native-chat-orca-stop-context'
 import { NativeChatInterruptedContinueButton } from './NativeChatInterruptedContinue'
+import { NativeChatUsageLimitAutoResume } from './NativeChatUsageLimitAutoResume'
 import { nativeChatOrcaStopRowText } from './native-chat-orca-stop-words'
 import { ProviderFrameRow } from './NativeChatTranscriptChrome'
 import { Button } from '@/components/ui/button'
@@ -158,6 +159,10 @@ export function NativeChatNoticeRow({
   const usageLimitContinue =
     block.usageLimitTurnItemId !== undefined &&
     block.usageLimitTurnItemId === orcaStopView.usageLimitTurnItemId
+  const usageLimitAutoResume =
+    orcaStopView.usageLimitAutoResume?.turnItemId === block.usageLimitTurnItemId
+      ? orcaStopView.usageLimitAutoResume
+      : null
   // Only reword auth text fully described by its fact; host text may also carry command advice.
   const authSurface =
     failure?.kind === 'notSignedIn'
@@ -217,14 +222,19 @@ export function NativeChatNoticeRow({
         {continueOffered ? (
           <NativeChatInterruptedContinueButton onContinue={orcaStopView.continueNow} />
         ) : usageLimitContinue ? (
-          <NativeChatInterruptedContinueButton
-            onContinue={orcaStopView.continueUsageLimit}
-            disabled={orcaStopView.usageLimitContinueDisabled}
-            explanation={translate(
-              'components.native-chat.interruptedContinue.usageLimitExplanation',
-              'Asks the agent to continue where it left off. Use it once the limit resets.'
-            )}
-          />
+          <>
+            <NativeChatInterruptedContinueButton
+              onContinue={orcaStopView.continueUsageLimit}
+              disabled={orcaStopView.usageLimitContinueDisabled}
+              explanation={translate(
+                'components.native-chat.interruptedContinue.usageLimitExplanation',
+                'Asks the agent to continue where it left off. Use it once the limit resets.'
+              )}
+            />
+            {usageLimitAutoResume ? (
+              <NativeChatUsageLimitAutoResume autoResume={usageLimitAutoResume} />
+            ) : null}
+          </>
         ) : null}
       </div>
       {claudeSignIn && isClaudeSignInFailureKind(block.failure?.kind) ? (
