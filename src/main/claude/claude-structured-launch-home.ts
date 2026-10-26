@@ -1,29 +1,38 @@
 import { join } from 'node:path'
+import type { AgentSessionAccountSwitchRecord } from '../../shared/agent-session-account-switch'
 import type { ClaudeProfileRouter } from '../claude-accounts/claude-profile-router'
+import { prepareClaudeAccountLaunch } from '../claude-accounts/claude-account-launch'
 import { applyClaudeEnvPatch } from '../claude-accounts/environment'
 import { AgentSessionPreSpawnError } from '../native-chat/agent-session-wire/structured-agent-session-adapter'
 import { resolveSessionFilePath } from '../native-chat/session-file-resolver'
 import { resolveStructuredClaudeAccountHomePath } from '../runtime/structured-agent-account-home'
 
-/** Follow the current account selection and pin its environment for this launch. */
+/** Follow the current account selection, or the account the chat was switched to, and pin its
+ *  environment for this launch. */
 export async function resolveClaudeStructuredLaunchHome(
   router: ClaudeProfileRouter | undefined,
   env: Record<string, string>,
-  recordHome: string
+  recordHome: string,
+  switched?: Pick<AgentSessionAccountSwitchRecord, 'accountId'>
 ): Promise<string> {
   if (!router) {
     return recordHome
   }
-  const preparation = await router.prepareLaunch()
+  const preparation = switched
+    ? await prepareClaudeAccountLaunch(router, switched.accountId)
+    : await router.prepareLaunch()
   // Read before patching: System default preserves the launch environment's CLAUDE_CONFIG_DIR.
+  // A chat switched to System default must not read the selected account's home.
   const launchHome =
-    preparation.provenance === 'system'
-      ? resolveStructuredClaudeAccountHomePath({
-          launchEnv: env,
-          wslDistro: null,
-          getClaudeConfigDirectory: () => router.systemDefaultHome()
-        })
-      : preparation.configDir
+    preparation.provenance !== 'system'
+      ? preparation.configDir
+      : switched
+        ? env.CLAUDE_CONFIG_DIR?.trim() || router.systemDefaultHome()
+        : resolveStructuredClaudeAccountHomePath({
+            launchEnv: env,
+            wslDistro: null,
+            getClaudeConfigDirectory: () => router.systemDefaultHome()
+          })
   applyClaudeEnvPatch(env, preparation.envPatch)
   return launchHome
 }

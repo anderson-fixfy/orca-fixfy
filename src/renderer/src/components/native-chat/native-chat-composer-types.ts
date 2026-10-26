@@ -18,6 +18,7 @@ import type { NativeChatComposerImageAttachment } from './NativeChatComposerFiel
 import type { NativeChatAfterStopSend } from './native-chat-composer-target'
 import type { NativeChatLocalCommandAnswer } from './use-native-chat-local-command-answer'
 import type { NativeChatRecallSource } from './native-chat-sent-prompt-history'
+import type { NativeChatAccountSwitchView } from './use-native-chat-account-switch'
 
 export type NativeChatComposerErrorDetail = {
   /** Error text Orca did not write, shown apart and copyable. */
@@ -34,6 +35,8 @@ export type NativeChatOptionPickerRequest = {
 }
 
 export type NativeChatStructuredComposerTransport = {
+  /** Present where the chat can move to another of its agent's accounts. */
+  accountSwitch?: NativeChatAccountSwitchView | null
   capturePresentation: CaptureStructuredAgentSessionPresentation
   conversationCommands?: readonly AgentSessionConversationCommand[]
   send: (

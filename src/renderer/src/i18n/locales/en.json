@@ -19123,6 +19123,7 @@
       },
       "notices": {
         "contextCleared": "Context cleared",
+        "accountSwitched": "Account switched - {{account}}",
         "compaction": "Context compacted",
         "details": "Details",
         "plan": "Plan",
@@ -19205,6 +19206,9 @@
         "noModelsMatch": "No models match your search.",
         "toggleOption": "Toggle {{value0}}",
         "pillAccessibleName": "{{value0}} {{value1}}",
+        "account": "Account",
+        "accountSwitching": "Switching account…",
+        "accountWaitForTurn": "Switch accounts after the current turn finishes.",
         "sentNotConfirmed": "Sent to the agent — not confirmed",
         "setWhenSessionStarts": "Set when the session starts.",
         "availableAfterSessionStarts": "Available after the session starts.",

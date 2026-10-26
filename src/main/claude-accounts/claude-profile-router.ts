@@ -173,17 +173,25 @@ export class ClaudeProfileRouter {
     }
     // Login changes since publication can change the route.
     this.writePointer()
-    const profile = this.routedProfile()
-    if (!profile) {
-      return this.preparation()
+    await this.readyForLaunch(this.routedProfile()?.accountId ?? null)
+    return this.preparation()
+  }
+
+  /** Ready a launch on `accountId`, or on System default when null, whatever the selection. */
+  async readyForLaunch(accountId: string | null): Promise<void> {
+    if (accountId === null) {
+      // Only fallback routing needs the shell env.
+      await this.envReady
+      return
     }
+    const profile = this.describe(accountId)
     // A missing marker means initial setup has not completed.
     if (!existsSync(claudeProfileMarkerPath(profile))) {
       const report = await this.setUp(profile).catch(() => null)
       if (report?.outcome !== 'prepared') {
         throw claudeProfileSetupFailed()
       }
-      return this.preparation()
+      return
     }
     // Run with the previous setup if refreshing fails or exceeds the deadline.
     const refresh = this.setUp(profile).catch((error: unknown) => {
@@ -191,8 +199,9 @@ export class ClaudeProfileRouter {
     })
     const waitMs = this.args.refreshWaitMs ?? REFRESH_WAIT_MS
     await Promise.race([refresh, new Promise((resolve) => setTimeout(resolve, waitMs).unref())])
-    return this.preparation()
   }
+
+  settings = (): ClaudeProfileRouterSettings => this.args.getSettings()
 
   accountHome(accountId: string): string {
     return this.describe(accountId).home

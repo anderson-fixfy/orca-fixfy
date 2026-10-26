@@ -74,12 +74,21 @@ export function NativeChatNoticeRow({
   const look = nativeChatNoticeLook(block)
   if (look.kind === 'divider') {
     const label =
-      look.label === 'contextCleared'
+      look.label === 'accountSwitched'
         ? translate(
-            'components.native-chat.notices.contextCleared',
-            NATIVE_CHAT_NOTICE_COPY.contextCleared
+            'components.native-chat.notices.accountSwitched',
+            NATIVE_CHAT_NOTICE_COPY.accountSwitched,
+            { account: look.account }
           )
-        : translate('components.native-chat.notices.compaction', NATIVE_CHAT_NOTICE_COPY.compaction)
+        : look.label === 'contextCleared'
+          ? translate(
+              'components.native-chat.notices.contextCleared',
+              NATIVE_CHAT_NOTICE_COPY.contextCleared
+            )
+          : translate(
+              'components.native-chat.notices.compaction',
+              NATIVE_CHAT_NOTICE_COPY.compaction
+            )
     return (
       <div
         role="separator"

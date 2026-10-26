@@ -268,6 +268,12 @@ const KnownItemBody = z.discriminatedUnion('kind', [
         clearedAt: z.number().int().nonnegative()
       })
       .optional(),
+    accountSwitch: z
+      .object({
+        accountId: z.string().min(1).max(512).nullable(),
+        account: z.string().min(1).max(1024)
+      })
+      .optional(),
     tone: z.string().optional(),
     turnLifecycle: z.object(TurnLifecycleFields).optional(),
     providerFrame: ProviderFrame.optional(),

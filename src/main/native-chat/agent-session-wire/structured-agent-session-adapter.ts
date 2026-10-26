@@ -211,6 +211,15 @@ export type StructuredAgentSessionAdapter = StructuredAgentSessionAdapterStop & 
   }): Promise<
     { ok: true; fork: AgentSessionRewindFork } | { ok: false; reason: AgentSessionRewindReason }
   >
+  /** Ready another account for this chat (its folder, its transcripts) before the record moves to
+   *  it; a refusal leaves the chat where it was. */
+  prepareAccountSwitch?(input: {
+    record: AgentSessionRecord
+    accountId: string | null
+  }): Promise<
+    | { ok: true; accountHome: AgentSessionAccountHome; account: string }
+    | { ok: false; reason: 'unknown-account' | 'setup-failed' }
+  >
   /** Return provider compaction admission; translator ends the command turn unless child-exit recovery does first. */
   compact?(input: {
     sessionId: string

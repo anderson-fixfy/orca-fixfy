@@ -36,6 +36,7 @@ export {
   UnsubscribeParams
 } from '../../../../shared/rpc-contract/structured-agent-session-params'
 export { ContinueInterruptedParams } from '../../../../shared/rpc-contract/structured-agent-session-continue-params'
+export { SwitchAccountParams } from '../../../../shared/rpc-contract/structured-agent-session-account-switch-params'
 export {
   QueuedMessageUpdateParams,
   QueuedMessageEditHoldParams

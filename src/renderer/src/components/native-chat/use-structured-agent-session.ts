@@ -11,10 +11,9 @@ import { structuredAgentLabel } from '@/lib/structured-agent-session-launch-labe
 import { useStructuredLegacyLaunchStop } from '@/lib/structured-agent-session-legacy-launch-stop'
 import {
   useStructuredAgentSessionHostQueuesCommands,
-  useStructuredAgentSessionHostEditsQueuedMessages,
-  useStructuredAgentSessionHostEditsQueuedImages,
   useStructuredAgentSessionHostQueuesMessagesState
 } from '@/runtime/structured-agent-session-host-capability'
+import { useStructuredAgentSessionQueuedEditTransport } from './use-structured-agent-session-queued-edit-transport'
 import { structuredAgentSessionStopControl } from './structured-agent-session-stop-control'
 import type { AgentSessionPromptResponse } from '../../../../shared/agent-session-question-answer'
 import {
@@ -230,12 +229,7 @@ export function useStructuredAgentSession(args: {
     transcriptPending,
     transportState.submissions
   )
-  const editCapable = useStructuredAgentSessionHostEditsQueuedMessages(target)
-  const imagesCapable = useStructuredAgentSessionHostEditsQueuedImages(target)
-  const editTransport = useMemo(
-    () => ({ target, sessionId, capable: editCapable, imagesCapable, write }),
-    [editCapable, imagesCapable, sessionId, target, write]
-  )
+  const editTransport = useStructuredAgentSessionQueuedEditTransport(target, sessionId, write)
   const queuedController = useStructuredAgentSessionQueuedMessages({
     // Its published list, pause and submissions; the rest is named below.
     ...transportState,
@@ -336,6 +330,8 @@ export function useStructuredAgentSession(args: {
     threadGoal,
     contextUsage: usage,
     /** Whether this session takes images, by its options report; undefined until it answers. */
-    acceptsImages
+    acceptsImages,
+    /** This chat's own fenced writes, for a hook that owns its method. */
+    write
   }
 }

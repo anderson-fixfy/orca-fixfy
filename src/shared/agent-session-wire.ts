@@ -34,6 +34,7 @@ import type {
 } from './agent-session-journal-types'
 import type { AgentTurnOutcome } from './agent-turn-outcome'
 import type { AgentSessionRecord } from './agent-session-record'
+import type { AgentSessionAccountSwitchResult } from './agent-session-account-switch'
 import type { AgentProviderSessionMetadata } from './agent-session-resume'
 import type { NativeChatSubagentEntry } from './native-chat-types'
 import type { StructuredAgentSessionProjectedStatus } from './structured-agent-session-projection'
@@ -277,6 +278,9 @@ export type AgentSessionStatusSummary = {
   /** Why the host could not name this chat, kept in memory only while the chat still has the
    *  name the failed run would have replaced. Absent from older hosts; older clients ignore it. */
   namingError?: AgentSessionNamingError
+  /** The account a person switched this chat to; absent while it follows the selected account,
+   *  and from older hosts. */
+  accountSwitch?: AgentSessionAccountSwitchResult
   /** The record's Sleep mark: the user's Sleep stopped this chat and nothing has been sent since.
    *  Absent from older hosts. */
   sleptAt?: number

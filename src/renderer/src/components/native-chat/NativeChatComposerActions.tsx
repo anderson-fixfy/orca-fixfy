@@ -7,6 +7,8 @@ import type {
   SessionOptionsSurface
 } from '../../../../shared/native-chat-session-options'
 import { NativeChatSessionOptionPickers } from './NativeChatSessionOptionPickers'
+import { NativeChatAccountPicker } from './NativeChatAccountPicker'
+import type { NativeChatAccountSwitchView } from './use-native-chat-account-switch'
 import { NativeChatComposerPermissionPicker } from './NativeChatPermissionModePicker'
 import { NativeChatComposerGoalChip } from './NativeChatComposerGoalChip'
 import { NativeChatContextUsageRing } from './NativeChatContextUsageRing'
@@ -42,6 +44,8 @@ export type NativeChatComposerActionsProps = {
   contextUsage?: NativeChatContextUsageSummary | null
   /** The chat's agent, whose permission modes the picker describes. */
   agent?: string
+  /** Present where the chat can move to another of its agent's accounts. */
+  accountSwitch?: NativeChatAccountSwitchView | null
 }
 
 export function NativeChatComposerActions({
@@ -66,7 +70,8 @@ export function NativeChatComposerActions({
   onExitGoalMode,
   contextUsage,
   focusComposer,
-  agent
+  agent,
+  accountSwitch
 }: NativeChatComposerActionsProps): React.JSX.Element {
   const stops = isWorking
   const handleCriticalAction = (event: React.MouseEvent<HTMLButtonElement>): void => {
@@ -139,6 +144,9 @@ export function NativeChatComposerActions({
       <div className="ml-auto flex items-center gap-1.5">
         {/* Why: keep the session picker beside the actions it affects; only the
         context ring separates it from dictation. */}
+        {accountSwitch ? (
+          <NativeChatAccountPicker view={accountSwitch} isWorking={isWorking} />
+        ) : null}
         <NativeChatSessionOptionPickers
           surface={sessionOptionsSurface}
           snapshot={sessionOptionsSnapshot}

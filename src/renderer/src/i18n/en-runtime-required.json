@@ -3187,6 +3187,7 @@
         "writeFailed": "Orca couldn't hand this message to the agent, so it was not sent."
       },
       "notices": {
+        "accountSwitched": "Account switched - {{account}}",
         "compaction": "Context compacted",
         "contextCleared": "Context cleared",
         "continuedOutside": "Continued outside this chat.",

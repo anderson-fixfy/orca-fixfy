@@ -10,6 +10,7 @@ import type { useStructuredAgentSession } from './use-structured-agent-session'
 import type { AgentType } from '../../../../shared/agent-status-types'
 import { translate } from '@/i18n/i18n'
 import { structuredAgentLabel } from '@/lib/structured-agent-session-launch-label'
+import { useNativeChatAccountSwitch } from './use-native-chat-account-switch'
 
 /** Why a paired chat's files can't upload yet: its host has not created the chat. */
 function nativeChatSessionAttachmentNotReadyNotice(agent: AgentType, starting: boolean): string {
@@ -52,6 +53,7 @@ export function useNativeChatStructuredComposerTransport(args: {
   const { setOptionPickerRequest, onError, onSubmitted } = args
   const { transportEnabled } = args
   const sendBlockedReason = args.sendBlockedReason ?? null
+  const accountSwitch = useNativeChatAccountSwitch(props, controller.write, onError)
   const acceptsImages = useStructuredAgentAcceptsImages(
     props.target,
     props.agent,
@@ -66,6 +68,7 @@ export function useNativeChatStructuredComposerTransport(args: {
             : Promise.resolve(false)
       : null
     return {
+      accountSwitch,
       capturePresentation: controller.capturePresentation,
       send: (text, attachments, ...request) =>
         sendBlockedReason === null &&
@@ -120,6 +123,7 @@ export function useNativeChatStructuredComposerTransport(args: {
     }
   }, [
     acceptsImages,
+    accountSwitch,
     controller,
     worktreeId,
     onError,

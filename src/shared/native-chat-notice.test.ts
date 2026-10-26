@@ -12,6 +12,15 @@ describe('nativeChatNoticeLook', () => {
   it.each([
     [{ presentation: 'compaction' }, { kind: 'divider', label: 'compaction' }],
     [{ presentation: 'context-cleared' }, { kind: 'divider', label: 'contextCleared' }],
+    [
+      {
+        presentation: 'account-switched',
+        accountSwitch: { accountId: 'adm', account: 'adm@example.com' }
+      },
+      { kind: 'divider', label: 'accountSwitched', account: 'adm@example.com' }
+    ],
+    // A row that lost its account still says its own sentence.
+    [{ presentation: 'account-switched' }, { kind: 'line', tone: null }],
     [{ presentation: 'command-output' }, { kind: 'command-output' }],
     [
       { presentation: 'history-repaired' },

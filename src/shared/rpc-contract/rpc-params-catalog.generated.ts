@@ -549,6 +549,7 @@ import {
   SshTargetAdd,
   SshTargetUpdate
 } from './ssh-params'
+import { SwitchAccountParams } from './structured-agent-session-account-switch-params'
 import { ContinueInterruptedParams } from './structured-agent-session-continue-params'
 import {
   AcknowledgeAttentionParams,
@@ -761,6 +762,7 @@ export const RPC_PARAMS_BY_METHOD = {
   'agentSession.subscribeAvailability': AvailabilityParams,
   'agentSession.subscribeStatus': null,
   'agentSession.subscribeTurnCompletions': SubscribeTurnCompletionsParams,
+  'agentSession.switchAccount': SwitchAccountParams,
   'agentSession.threadGoal': ThreadGoalParams,
   'agentSession.unsubscribe': UnsubscribeParams,
   'agentSessionAttachment.read': AttachmentReadParams,
