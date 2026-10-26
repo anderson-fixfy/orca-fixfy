@@ -12,8 +12,13 @@ import {
   NativeChatEditUserMessageContext,
   editNativeChatUserMessage
 } from './native-chat-edit-user-message'
+import {
+  NativeChatForkContext,
+  useNativeChatForkFromMessage
+} from './native-chat-fork-from-message'
 
-/** What the pane's transcript rows offer: rewind and edit on the user's, a new chat on the agent's. */
+/** What the pane's transcript rows offer: rewind and edit on the user's, a new chat and a fork on
+ *  the agent's. */
 export function NativeChatRowActionsProvider({
   chat,
   rewind,
@@ -35,11 +40,18 @@ export function NativeChatRowActionsProvider({
     () => (message: NativeChatMessage) => editNativeChatUserMessage({ sessionId, tabId }, message),
     [sessionId, tabId]
   )
+  const fork = useNativeChatForkFromMessage({
+    agent: chat.agent,
+    sessionId,
+    tabId,
+    worktreeId,
+    target: chat.target
+  })
   return (
     <NativeChatRewindContext.Provider value={rewind}>
       <NativeChatNewChatContext.Provider value={newChat}>
         <NativeChatEditUserMessageContext.Provider value={edit}>
-          {children}
+          <NativeChatForkContext.Provider value={fork}>{children}</NativeChatForkContext.Provider>
         </NativeChatEditUserMessageContext.Provider>
       </NativeChatNewChatContext.Provider>
     </NativeChatRewindContext.Provider>

@@ -8,6 +8,7 @@ import type {
   AgentSessionTurnCompletionEvent
 } from '../../../shared/agent-session-wire'
 import type { AgentSessionConversationOutline } from '../../../shared/agent-session-conversation-outline'
+import type { AgentSessionMessageForkResult } from '../../../shared/agent-session-message-fork'
 import { AGENT_SESSION_CONVERSATION_COMMAND_TIMEOUT_MS } from '../../../shared/agent-session-conversation-command'
 import {
   AGENT_SESSION_ATTENTION_ACK_RUNTIME_CAPABILITY,
@@ -238,6 +239,19 @@ export async function regenerateStructuredAgentSessionName(
     console.warn('[structured-session-naming] regenerate failed', error)
     return false
   }
+}
+
+/** Copies the chat's conversation through one agent message into a new provider session, for a
+ *  new chat to resume. Only a host advertising the message-fork capability is asked. */
+export function forkStructuredAgentSessionThroughMessage(
+  target: RuntimeClientTarget,
+  sessionId: string,
+  itemId: string
+): Promise<AgentSessionMessageForkResult> {
+  return callRuntimeRpc<AgentSessionMessageForkResult>(target, 'agentSession.forkThroughMessage', {
+    sessionId,
+    itemId
+  })
 }
 
 /** The user read this chat: the owning host withdraws the phone alerts it pushed for it. An older

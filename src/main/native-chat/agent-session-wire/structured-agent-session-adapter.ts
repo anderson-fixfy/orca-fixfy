@@ -1,4 +1,5 @@
 import type { AiVaultConversationCopy } from '../../../shared/ai-vault-resume-preparation'
+import type { AgentSessionMessageForkResult } from '../../../shared/agent-session-message-fork'
 import type {
   AgentSessionRewindFork,
   AgentSessionRewindReason,
@@ -220,6 +221,12 @@ export type StructuredAgentSessionAdapter = StructuredAgentSessionAdapterStop & 
     | { ok: true; accountHome: AgentSessionAccountHome; account: string }
     | { ok: false; reason: 'unknown-account' | 'setup-failed' }
   >
+  /** Copy the conversation through one of its messages into a new provider session; the chat
+   *  and its conversation do not change. */
+  forkThroughMessage?(input: {
+    record: AgentSessionRecord
+    message: { sessionId: string; uuid: string }
+  }): Promise<AgentSessionMessageForkResult>
   /** Return provider compaction admission; translator ends the command turn unless child-exit recovery does first. */
   compact?(input: {
     sessionId: string

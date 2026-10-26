@@ -36,6 +36,11 @@ export function claudeSourceBlockId(messageId: string, index: number): string {
   return `block:${messageId}:${index}`
 }
 
+export function parseClaudeSourceBlockId(id: string): { messageId: string; index: number } | null {
+  const match = /^block:(.+):(\d+)$/.exec(id)
+  return match ? { messageId: match[1]!, index: Number(match[2]) } : null
+}
+
 function scopeKey(sessionId: string, parentToolUseId: string | null): string {
   return `${sessionId}/${parentToolUseId ?? ''}`
 }

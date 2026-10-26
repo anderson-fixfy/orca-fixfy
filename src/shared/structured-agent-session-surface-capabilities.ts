@@ -23,6 +23,10 @@ export const STRUCTURED_AGENT_SESSION_REVEAL_RUNTIME_CAPABILITY =
 // `agentSession.regenerateName`; an older host still publishes nothing a client must act on.
 export const STRUCTURED_AGENT_SESSION_REGENERATE_NAME_RUNTIME_CAPABILITY =
   'agent-session.structured.regenerate-name.v1' as const
+// Why: an agent message offers "Fork" only on a host that has `agentSession.forkThroughMessage`; an
+// older host would answer method-not-found after the click.
+export const STRUCTURED_AGENT_SESSION_MESSAGE_FORK_RUNTIME_CAPABILITY =
+  'agent-session.structured.message-fork.v1' as const
 // Why: `agentSession.create` gains an optional `resumeFrom`, and its params are a STRICT union — an
 // older host rejects the unknown key as a schema error, which a client cannot tell from a real
 // refusal. Worse, without probing, a client cannot know whether a host that accepted the call
@@ -64,5 +68,6 @@ export const STRUCTURED_AGENT_SESSION_SURFACE_RUNTIME_CAPABILITIES = [
   AGENT_SESSION_MODEL_CATALOG_SAVED_ONLY_RUNTIME_CAPABILITY,
   STRUCTURED_AGENT_SESSION_AVAILABILITY_RUNTIME_CAPABILITY,
   STRUCTURED_AGENT_SESSION_REGENERATE_NAME_RUNTIME_CAPABILITY,
-  STRUCTURED_AGENT_SESSION_ACCOUNT_SWITCH_RUNTIME_CAPABILITY
+  STRUCTURED_AGENT_SESSION_ACCOUNT_SWITCH_RUNTIME_CAPABILITY,
+  STRUCTURED_AGENT_SESSION_MESSAGE_FORK_RUNTIME_CAPABILITY
 ] as const
