@@ -51,7 +51,9 @@ export function MobileNativeChatNoticeRow({
   const look = nativeChatNoticeLook(notice)
   switch (look.kind) {
     case 'divider': {
-      const label = NATIVE_CHAT_NOTICE_COPY[look.label]
+      // The host's own sentence names the account; the copy holds only its template.
+      const label =
+        look.label === 'accountSwitched' ? notice.text : NATIVE_CHAT_NOTICE_COPY[look.label]
       return (
         <View style={styles.divider} accessibilityRole="text" accessibilityLabel={label}>
           <View style={styles.rule} />

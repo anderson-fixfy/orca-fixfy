@@ -1,4 +1,5 @@
-import { Goal } from 'lucide-react'
+import { useContext } from 'react'
+import { Goal, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
@@ -15,26 +16,29 @@ import { NativeChatCopyButton } from './NativeChatCopyButton'
 import { NativeChatMessageTimestamp } from './NativeChatMessageTimestamp'
 import { NativeChatAgentMessageSenders } from './NativeChatAgentMessageSenders'
 import { NativeChatImageAttachments } from './NativeChatTranscriptChrome'
+import { NativeChatEditUserMessageContext } from './native-chat-edit-user-message'
 import type { deriveNativeChatRowContent } from '../../../../shared/native-chat-row-content'
 
 const USER_META_REVEAL =
   'transition-opacity can-hover:pointer-events-none can-hover:opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 [.group:has(:focus-visible)_&]:pointer-events-auto [.group:has(:focus-visible)_&]:opacity-100'
 
-/** Under a user message: copy + timestamp, revealed together like the agent controls row. Until
- *  confirmed, a quiet "Sending…" stays visible in the time's place and copy keeps its own reveal,
- *  so the row keeps its height when it clears. Image-only prompts have no text to copy. */
+/** Under a user message: copy, edit + timestamp, revealed together like the agent controls row.
+ *  Until confirmed, a quiet "Sending…" stays visible in the time's place and copy keeps its own
+ *  reveal, so the row keeps its height when it clears. Image-only prompts have no text to copy. */
 function UserMessageMeta({
   markdown,
   timestamp,
   sending,
-  rewind
+  rewind,
+  onEdit
 }: {
   markdown: string
   timestamp: number | null
   sending: boolean
   rewind?: { itemId: string; surface: NativeChatRewindSurface }
+  onEdit?: () => void
 }): React.JSX.Element | null {
-  if (!markdown && timestamp === null && !sending && !rewind) {
+  if (!markdown && timestamp === null && !sending && !rewind && !onEdit) {
     return null
   }
   return (
@@ -46,6 +50,7 @@ function UserMessageMeta({
       {markdown ? (
         <NativeChatCopyButton text={markdown} className={sending ? USER_META_REVEAL : undefined} />
       ) : null}
+      {onEdit && !sending ? <NativeChatEditUserMessageButton onEdit={onEdit} /> : null}
       {sending ? (
         <span className="text-xs whitespace-nowrap text-chat-foreground-faint">
           {translate('components.native-chat.messageSending', 'Sending…')}
@@ -57,6 +62,21 @@ function UserMessageMeta({
         <NativeChatRewindAction itemId={rewind.itemId} rewind={rewind.surface} />
       ) : null}
     </div>
+  )
+}
+
+function NativeChatEditUserMessageButton({ onEdit }: { onEdit: () => void }): React.JSX.Element {
+  const label = translate('components.native-chat.editUserMessage', 'Edit message')
+  return (
+    <button
+      type="button"
+      onClick={onEdit}
+      aria-label={label}
+      title={label}
+      className="flex size-6 shrink-0 items-center justify-center rounded-md text-chat-foreground-faint transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <Pencil className="size-3.5" />
+    </button>
   )
 }
 
@@ -87,6 +107,11 @@ export function NativeChatUserMessageRow({
   // left-aligned under its sender rather than as their bubble.
   const from = message.from
   const sending = deliveryNotice?.sending === true
+  const edit = useContext(NativeChatEditUserMessageContext)
+  // Another agent's message was never typed here; an image without a path cannot be attached again.
+  const editable =
+    !from &&
+    (markdown !== '' || message.blocks.some((block) => block.type === 'image-ref' && block.path))
   return (
     <div
       ref={rowRef}
@@ -152,6 +177,7 @@ export function NativeChatUserMessageRow({
         timestamp={message.timestamp}
         sending={sending}
         {...(rewind ? { rewind: { itemId: message.id, surface: rewind } } : {})}
+        {...(edit && editable ? { onEdit: () => edit(message) } : {})}
       />
       {deliveryNotice?.text !== undefined ? (
         <div className="flex max-w-[85%] items-center gap-2 text-2xs text-destructive/80">

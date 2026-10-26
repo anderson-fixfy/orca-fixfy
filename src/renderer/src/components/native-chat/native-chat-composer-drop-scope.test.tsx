@@ -37,9 +37,10 @@ const intake = vi.hoisted(() => {
   }
 })
 vi.mock('@/store', () => ({
-  useAppStore: Object.assign((select: () => unknown) => select(), {
-    getState: () => ({ tabsByWorktree: {} })
-  })
+  useAppStore: Object.assign(
+    (select: (state: { tabsByWorktree: object }) => unknown) => select({ tabsByWorktree: {} }),
+    { getState: () => ({ tabsByWorktree: {} }) }
+  )
 }))
 // Keeps the real notice strings so the silent-failure guards assert what users see.
 vi.mock('./native-chat-attachment-upload', async (importOriginal) => ({

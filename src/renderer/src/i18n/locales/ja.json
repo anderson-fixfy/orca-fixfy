@@ -19074,6 +19074,13 @@
         "copy": "メッセージをコピーする"
       },
       "scrollMessageToTop": "このメッセージを一番上までスクロールします",
+      "newChatFromMessage": "このメッセージから新しいチャット",
+      "editUserMessage": "メッセージを編集",
+      "pinChapter": "章を固定",
+      "pinnedChapter": "固定された章",
+      "forkFromMessage": "このメッセージからフォーク",
+      "forkFromMessageFailed": "このチャットをフォークできませんでした。",
+      "forkFromMessageNotSaved": "Claude はまだこのメッセージを保存していません。しばらくしてからもう一度お試しください。",
       "loadingEarlier": "読み込み中…",
       "loadEarlier": "以前のメッセージをロードする",
       "loadingEarlierMessages": "以前のメッセージを読み込み中…",
@@ -19350,6 +19357,12 @@
         "explanation": "続行すると、Agent はまず最後の手順が完了したかどうかを確認します。",
         "unconfirmed": "{{agent}} が続行を受信したかどうかを確認できませんでした。もう一度試す前にチャットを確認してください。",
         "usageLimitExplanation": "中断したところから続けるよう Agent に依頼します。上限がリセットされてから使ってください。"
+      },
+      "usageLimitAutoResume": {
+        "resume": "自動で再開",
+        "explanation": "上限がリセットされた 1 分後の {{time}} に、このウィンドウを閉じていてもこのチャットに続行を送信します。",
+        "scheduled": "{{time}} に再開",
+        "cancel": "キャンセル"
       },
       "rewind": {
         "unsupported": "このチャットは以前のメッセージに戻れません。",
@@ -19784,6 +19797,10 @@
         "queueFollowUpsTitle": "フォローアップをキューに入れる",
         "queueFollowUpsCopy": "Agent の作業中に送信したメッセージは、今すぐ送信・編集・削除できるカードとして待機します。画像付きのメッセージはすぐに送信されます。",
         "queueFollowUpsToggleLabel": "フォローアップのキューを切り替え",
+        "markdownComposerTitle": "Markdown プレビューモード",
+        "markdownComposerCopy": "メッセージ欄に Markdown を書式設定済みで表示します（Markdown エディターと同様）。送信内容は Markdown のままです。",
+        "markdownComposerToggleLabel": "Markdown プレビューモードを切り替え",
+        "markdownComposerSearchFormatting": "書式",
         "inlineVisualsTitle": "インライン表示",
         "inlineVisualsCopy": "Agent が返信内でグラフ、図、モックアップを表示できるようにします。新しく開始したチャットに適用されます。",
         "inlineVisualsToggleLabel": "インライン表示を切り替え",

@@ -1,4 +1,4 @@
-import type { AgentSessionProviderContextBoundary } from './agent-session-provider-context'
+import type { AgentSessionDividerMarkers } from './agent-session-divider-markers'
 // ─── Native chat conversation model (cross-process, IPC-serializable) ────────
 // The single renderer-facing conversation contract for the native chat view.
 // Assembled from layered sources in priority order: on-disk JSONL transcripts,
@@ -46,12 +46,11 @@ export const NATIVE_CHAT_ROLES = ['user', 'assistant', 'tool', 'reasoning', 'sys
 export type NativeChatRole = (typeof NATIVE_CHAT_ROLES)[number]
 
 /** Plain prose / markdown. The assistant body, a user prompt, reasoning text. */
-export type NativeChatTextBlock = {
+export type NativeChatTextBlock = AgentSessionDividerMarkers & {
   type: 'text'
   text: string
   /** Optional journal display hints; readers narrow only the values they know. */
   presentation?: string
-  contextClear?: AgentSessionProviderContextBoundary
   tone?: string
   /** Optional structured detail for an otherwise ordinary fallback line. */
   providerFrame?: {

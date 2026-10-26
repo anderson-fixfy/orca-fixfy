@@ -68,6 +68,14 @@ export function structuredAgentSessionStatusSummary({
     ...(launchDirectory ? { launchDirectory } : {}),
     ...structuredSummaryConversationNaming(record, namingFailure),
     ...(typeof record?.sleptAt === 'number' ? { sleptAt: record.sleptAt } : {}),
+    ...(record?.accountSwitch
+      ? {
+          accountSwitch: {
+            accountId: record.accountSwitch.accountId,
+            account: record.accountSwitch.account
+          }
+        }
+      : {}),
     updatedAt: journal.lastActivityAt() || now()
   }
 }

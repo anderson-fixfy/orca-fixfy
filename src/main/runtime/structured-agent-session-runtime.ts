@@ -63,7 +63,7 @@ import {
 } from './structured-agent-model-catalog-wiring'
 import type { ClaudeCliFlagSupport } from '../claude/claude-cli-flag-support'
 import { migrateLegacyNativeChatVisualsFolders } from '../native-chat/native-chat-scratch-folder-migration'
-import { scheduleNativeChatVisualsSweep } from '../native-chat/native-chat-visuals-sweep'
+import { startStructuredAgentSessionStateSchedules } from './structured-agent-session-state-schedules'
 
 /** Whether this profile holds a structured chat: a record or tab in the journal database. */
 export function hasPersistedStructuredAgentSessionStore(
@@ -352,13 +352,6 @@ async function installOnJournal(
     journalDatabase,
     logger: deps.logger
   })
-  const stopVisualsSweep = deps.nativeChatVisuals
-    ? scheduleNativeChatVisualsSweep({
-        stateDirectory: deps.stateDirectory,
-        listHeldSessionIds: () => (store.readOnly ? null : store.listHeldSessionIds()),
-        logger: deps.logger
-      })
-    : undefined
   const stopCommands = bindAtRestCommandContexts(
     registrations.map(({ adapter }) => adapter.atRestCommands)
   )
@@ -368,6 +361,7 @@ async function installOnJournal(
     stopCommands()
     throw error
   }
+  const stopSchedules = startStructuredAgentSessionStateSchedules({ host, store, deps })
   return {
     host,
     adapter,
@@ -375,7 +369,7 @@ async function installOnJournal(
     waitForRecovery: lifecycle.drain,
     stopBackgroundWork: () => {
       stopCommands()
-      stopVisualsSweep?.()
+      stopSchedules()
       modelCatalog?.stop()
     }
   }

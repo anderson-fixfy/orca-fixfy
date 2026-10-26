@@ -19074,6 +19074,13 @@
         "copy": "메시지 복사"
       },
       "scrollMessageToTop": "이 메시지를 맨 위로 스크롤",
+      "newChatFromMessage": "이 메시지로 새 채팅",
+      "editUserMessage": "메시지 편집",
+      "pinChapter": "챕터 고정",
+      "pinnedChapter": "고정된 챕터",
+      "forkFromMessage": "이 메시지에서 포크",
+      "forkFromMessageFailed": "이 채팅을 포크할 수 없습니다.",
+      "forkFromMessageNotSaved": "Claude가 아직 이 메시지를 저장하지 않았습니다. 잠시 후 다시 시도하세요.",
       "loadingEarlier": "로드 중…",
       "loadEarlier": "이전 메시지 로드",
       "loadingEarlierMessages": "이전 메시지 로드 중…",
@@ -19350,6 +19357,12 @@
         "explanation": "계속하면 에이전트가 먼저 마지막 단계가 완료되었는지 확인합니다.",
         "unconfirmed": "{{agent}}에 계속 요청이 전달되었는지 확인할 수 없습니다. 다시 시도하기 전에 채팅을 확인하세요.",
         "usageLimitExplanation": "중단한 곳부터 계속하도록 에이전트에 요청합니다. 한도가 초기화된 후 사용하세요."
+      },
+      "usageLimitAutoResume": {
+        "resume": "자동으로 재개",
+        "explanation": "한도가 재설정되고 1분 뒤인 {{time}}에 이 창이 닫혀 있어도 이 채팅에 계속을 보냅니다.",
+        "scheduled": "{{time}}에 재개",
+        "cancel": "취소"
       },
       "rewind": {
         "unsupported": "이 채팅은 이전 메시지로 돌아갈 수 없습니다.",
@@ -19784,6 +19797,10 @@
         "queueFollowUpsTitle": "후속 메시지 대기열에 추가",
         "queueFollowUpsCopy": "Agent가 작업하는 동안 보낸 메시지는 지금 보내기, 편집, 삭제할 수 있는 카드로 대기합니다. 이미지가 포함된 메시지는 바로 전송됩니다.",
         "queueFollowUpsToggleLabel": "후속 메시지 대기열 전환",
+        "markdownComposerTitle": "Markdown 미리보기 모드",
+        "markdownComposerCopy": "메시지 입력란에 Markdown을 서식이 적용된 상태로 표시합니다(Markdown 편집기와 동일). 보내는 내용은 Markdown 그대로입니다.",
+        "markdownComposerToggleLabel": "Markdown 미리보기 모드 전환",
+        "markdownComposerSearchFormatting": "서식",
         "inlineVisualsTitle": "인라인 시각 자료",
         "inlineVisualsCopy": "에이전트가 답변 안에 차트, 다이어그램, 목업을 표시하도록 합니다. 새로 시작한 채팅에 적용됩니다.",
         "inlineVisualsToggleLabel": "인라인 시각 자료 전환",

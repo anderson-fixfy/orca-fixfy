@@ -34,7 +34,12 @@ it('keeps a skipped compaction warning truthful instead of showing the success s
 })
 
 type ContinueOffer = Pick<NativeChatOrcaStopView, 'offeredTurnItemId' | 'continueNow'> &
-  Partial<Pick<NativeChatOrcaStopView, 'usageLimitTurnItemId' | 'continueUsageLimit'>>
+  Partial<
+    Pick<
+      NativeChatOrcaStopView,
+      'usageLimitTurnItemId' | 'continueUsageLimit' | 'usageLimitAutoResume'
+    >
+  >
 
 function orcaStopView(
   hostLabel: string | null,
@@ -253,6 +258,49 @@ describe('the row a usage limit leaves', () => {
     ).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
     expect(continueUsageLimit).toHaveBeenCalledTimes(1)
+  })
+
+  it('offers Resume automatically beside Continue, then shows when and Cancel', () => {
+    const autoResume = {
+      turnItemId: 'cut-turn',
+      resumeAt: null,
+      plannedAt: resetsAt + 60_000,
+      busy: false,
+      schedule: vi.fn(),
+      cancel: vi.fn()
+    }
+    const offer = { ...NO_OFFER, usageLimitTurnItemId: 'cut-turn' }
+    const { unmount } = renderStatus(row, null, false, false, 'Claude', {
+      ...offer,
+      usageLimitAutoResume: autoResume
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Resume automatically' }))
+    expect(autoResume.schedule).toHaveBeenCalledTimes(1)
+    unmount()
+
+    vi.useFakeTimers({ now: new Date(2026, 9, 18, 12, 30), toFake: ['Date'] })
+    renderStatus(row, null, false, false, 'Claude', {
+      ...offer,
+      usageLimitAutoResume: { ...autoResume, resumeAt: resetsAt + 60_000 }
+    })
+    vi.useRealTimers()
+    const clock = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(
+      resetsAt + 60_000
+    )
+    expect(screen.getByText(`Resumes at ${clock}`)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Resume automatically' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(autoResume.cancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('has no Resume automatically when the limit gave no reset time', () => {
+    renderStatus(row, null, false, false, 'Claude', {
+      ...NO_OFFER,
+      usageLimitTurnItemId: 'cut-turn',
+      usageLimitAutoResume: null
+    })
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Resume automatically' })).toBeNull()
   })
 
   it('tells a chat that has no Continue to send a message', () => {

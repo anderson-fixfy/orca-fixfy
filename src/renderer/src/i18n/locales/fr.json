@@ -19184,6 +19184,13 @@
         "copy": "Copier le message"
       },
       "scrollMessageToTop": "Revenir au début du message",
+      "newChatFromMessage": "Nouveau chat à partir de ce message",
+      "editUserMessage": "Modifier le message",
+      "pinChapter": "Épingler le chapitre",
+      "pinnedChapter": "Chapitre épinglé",
+      "forkFromMessage": "Forker à partir de ce message",
+      "forkFromMessageFailed": "Impossible de forker ce chat.",
+      "forkFromMessageNotSaved": "Claude n'a pas encore enregistré ce message. Réessayez dans un instant.",
       "loadingEarlier": "Chargement…",
       "loadEarlier": "Charger les messages précédents",
       "loadingEarlierMessages": "Chargement des messages précédents…",
@@ -19460,6 +19467,12 @@
         "explanation": "Continuez, et l'agent vérifiera d'abord si sa dernière étape s'est terminée.",
         "unconfirmed": "Impossible de confirmer si {{agent}} a reçu Continuer. Vérifiez le chat avant de réessayer.",
         "usageLimitExplanation": "Demande à l’agent de reprendre là où il s’était arrêté. À utiliser une fois la limite réinitialisée."
+      },
+      "usageLimitAutoResume": {
+        "resume": "Reprendre automatiquement",
+        "explanation": "Envoie Continuer dans ce chat à {{time}}, une minute après la réinitialisation de la limite, même si cette fenêtre est fermée.",
+        "scheduled": "Reprise à {{time}}",
+        "cancel": "Annuler"
       },
       "rewind": {
         "unsupported": "Ce chat ne peut pas revenir à un message antérieur.",
@@ -19925,6 +19938,10 @@
         "queueFollowUpsTitle": "Mettre les messages en file d’attente",
         "queueFollowUpsCopy": "Les messages envoyés pendant que l'agent travaille attendent sous forme de cartes que vous pouvez envoyer maintenant, modifier ou supprimer. Les messages avec des images sont envoyés immédiatement.",
         "queueFollowUpsToggleLabel": "Activer ou désactiver la file d'attente",
+        "markdownComposerTitle": "Mode d’aperçu Markdown",
+        "markdownComposerCopy": "La zone de message affiche le Markdown déjà mis en forme, comme l’éditeur Markdown. Ce que vous envoyez reste en Markdown.",
+        "markdownComposerToggleLabel": "Activer ou désactiver le mode d’aperçu Markdown",
+        "markdownComposerSearchFormatting": "mise en forme",
         "inlineVisualsTitle": "Visuels intégrés",
         "inlineVisualsCopy": "Laissez l'agent afficher des graphiques, des diagrammes et des maquettes dans ses réponses. S'applique aux nouveaux chats.",
         "inlineVisualsToggleLabel": "Activer/désactiver les visuels intégrés",

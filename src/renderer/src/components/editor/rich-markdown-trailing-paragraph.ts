@@ -56,8 +56,10 @@ export const RichMarkdownTrailingParagraph = TrailingNode.extend({
   }
 })
 
-export function getRichMarkdownSerializationDocument(editor: Editor): ProseMirrorNode {
-  const document = editor.state.doc
+export function getRichMarkdownSerializationDocument(
+  editor: Editor,
+  document: ProseMirrorNode = editor.state.doc
+): ProseMirrorNode {
   const synthetic = trailingParagraph.getState(editor.state)
   return synthetic && document.lastChild === synthetic
     ? document.copy(document.content.cut(0, document.content.size - synthetic.nodeSize))

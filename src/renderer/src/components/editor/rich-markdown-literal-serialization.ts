@@ -22,6 +22,13 @@ function withoutOptionalEscapes(markdown: string): string {
   )
 }
 
+const literalSerializers = new WeakMap<Editor, (document: ProseMirrorNode) => string>()
+
+/** Serializes any document of this editor's schema as `getMarkdown` serializes its own. */
+export function serializeRichMarkdownDocument(editor: Editor, document: ProseMirrorNode): string {
+  return literalSerializers.get(editor)?.(document) ?? editor.markdown!.serialize(document.toJSON())
+}
+
 export function preserveLiteralMarkdownSource(
   editor: Editor,
   codec: RichMarkdownEditorCodec,
@@ -82,8 +89,7 @@ export function preserveLiteralMarkdownSource(
     return result
   }
 
-  editor.getMarkdown = () => {
-    const document = getRichMarkdownSerializationDocument(editor)
+  const serialize = (document: ProseMirrorNode): string => {
     const json = document.toJSON()
     const markdown = manager.serialize(json)
     if (!/\\[_[\]~`*]/.test(markdown)) {
@@ -105,4 +111,6 @@ export function preserveLiteralMarkdownSource(
       blocks = undefined
     }
   }
+  literalSerializers.set(editor, serialize)
+  editor.getMarkdown = () => serialize(getRichMarkdownSerializationDocument(editor))
 }

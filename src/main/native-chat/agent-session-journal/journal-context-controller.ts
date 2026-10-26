@@ -2,6 +2,8 @@ import type { AgentJournalCursor } from '../../../shared/agent-session-journal-t
 import type { AgentSessionProviderContextBoundary } from '../../../shared/agent-session-provider-context'
 import { latestAgentSessionContextClearSequence } from '../../../shared/agent-session-context-clear'
 import { appendJournalContextClear } from './journal-context-clear'
+import { appendJournalAccountSwitch } from './journal-account-switch'
+import type { AgentSessionAccountSwitchRow } from '../../../shared/agent-session-account-switch'
 import { rewindJournalContext } from './journal-context-rewind'
 import type { JournalReplacementItem } from './journal-epoch-replacement'
 import type { JournalOperationReceipt, JournalRowWriter } from './journal-row-writer'
@@ -25,6 +27,14 @@ export class JournalContextController {
 
   clear(boundary: AgentSessionProviderContextBoundary, receipt: JournalOperationReceipt) {
     return appendJournalContextClear({ ...this.deps, boundary, receipt })
+  }
+
+  switchAccount(
+    row: AgentSessionAccountSwitchRow,
+    change: { operationId: string; fence: number },
+    receipt: JournalOperationReceipt
+  ) {
+    return appendJournalAccountSwitch({ ...this.deps, row, ...change, receipt })
   }
 
   rewind(

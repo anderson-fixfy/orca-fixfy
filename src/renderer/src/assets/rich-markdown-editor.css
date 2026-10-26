@@ -1602,3 +1602,26 @@
 .rich-markdown-link-input::placeholder {
   color: var(--muted-foreground);
 }
+
+/* The chat composer's Markdown mode keeps the composer's own box: its size, padding and type. */
+.rich-markdown-editor.native-chat-markdown-composer-editor {
+  min-height: revert-layer;
+  padding: revert-layer;
+  font-size: revert-layer;
+  line-height: revert-layer;
+}
+
+.native-chat-markdown-composer-editor p,
+.native-chat-markdown-composer-editor ul,
+.native-chat-markdown-composer-editor ol,
+.native-chat-markdown-composer-editor blockquote {
+  margin: 0.25em 0;
+}
+
+.native-chat-markdown-composer-editor > :first-child {
+  margin-top: 0;
+}
+
+.native-chat-markdown-composer-editor > :last-child {
+  margin-bottom: 0;
+}

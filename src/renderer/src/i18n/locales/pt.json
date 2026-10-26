@@ -19177,6 +19177,7 @@
         "details": "Detalhes",
         "plan": "Plano",
         "contextCleared": "Contexto limpo",
+        "accountSwitched": "Conta trocada - {{account}}",
         "historyRepaired": "Não foi possível carregar parte do histórico deste chat.",
         "historyItemTooLarge": "Esta parte do chat era grande demais para ser exibida.",
         "continuedOutside": "Continuou fora deste chat.",
@@ -19234,6 +19235,9 @@
         "chooseInAgentPicker": "Escolha no seletor de agente…",
         "toggleOption": "Alternar {{value0}}",
         "pillAccessibleName": "{{value0}} {{value1}}",
+        "account": "Conta",
+        "accountSwitching": "Trocando de conta…",
+        "accountWaitForTurn": "Troque de conta depois que o turno atual terminar.",
         "sentNotConfirmed": "Enviado ao agente — não confirmado",
         "setWhenSessionStarts": "Definido quando a sessão começa.",
         "availableAfterSessionStarts": "Disponível após a sessão começar.",
@@ -19495,6 +19499,13 @@
         "copy": "Copiar mensagem"
       },
       "scrollMessageToTop": "Rolar esta mensagem para o topo",
+      "newChatFromMessage": "Novo chat a partir desta mensagem",
+      "editUserMessage": "Editar mensagem",
+      "pinChapter": "Fixar capítulo",
+      "pinnedChapter": "Capítulo fixado",
+      "forkFromMessage": "Bifurcar a partir desta mensagem",
+      "forkFromMessageFailed": "Não foi possível bifurcar este chat.",
+      "forkFromMessageNotSaved": "O Claude ainda não salvou esta mensagem. Tente de novo em instantes.",
       "loadingEarlier": "Carregando…",
       "loadEarlier": "Carregar mensagens anteriores",
       "railLabel": "Suas mensagens",
@@ -19908,6 +19919,12 @@
         "unconfirmed": "Não foi possível confirmar se o {{agent}} recebeu Continuar. Confira o chat antes de tentar novamente.",
         "usageLimitExplanation": "Pede ao agente para continuar de onde parou. Use quando o limite for restabelecido."
       },
+      "usageLimitAutoResume": {
+        "resume": "Retomar automaticamente",
+        "explanation": "Envia Continuar neste chat às {{time}}, um minuto depois que o limite for restabelecido, mesmo com esta janela fechada.",
+        "scheduled": "Retomada às {{time}}",
+        "cancel": "Cancelar"
+      },
       "antigravitySignIn": {
         "sentence": "Você não está conectado ao Antigravity. Entre em <settings>Configurações → Contas → Antigravity</settings>. Depois envie sua mensagem novamente."
       },
@@ -20310,6 +20327,10 @@
         "inlineVisualsToggleLabel": "Ativar ou desativar visualizações nas respostas",
         "queueFollowUpsCopy": "As mensagens enviadas enquanto o agente trabalha aguardam como cartões que você pode usar para orientá-lo, editar ou excluir. Mensagens com imagens são enviadas imediatamente.",
         "queueFollowUpsToggleLabel": "Ativar ou desativar fila de mensagens de acompanhamento",
+        "markdownComposerTitle": "Modo de visualização Markdown",
+        "markdownComposerCopy": "A caixa de mensagem mostra o Markdown já formatado, como o editor de Markdown. O que você envia continua em Markdown.",
+        "markdownComposerToggleLabel": "Ativar ou desativar o modo de visualização Markdown",
+        "markdownComposerSearchFormatting": "formatação",
         "behaviorTitle": "Comportamento",
         "resumeSearchUpdate": "atualizar",
         "resumeSearchRelaunch": "reiniciar",
