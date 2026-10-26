@@ -19076,6 +19076,8 @@
       "scrollMessageToTop": "이 메시지를 맨 위로 스크롤",
       "newChatFromMessage": "이 메시지로 새 채팅",
       "editUserMessage": "메시지 편집",
+      "pinChapter": "챕터 고정",
+      "pinnedChapter": "고정된 챕터",
       "loadingEarlier": "로드 중…",
       "loadEarlier": "이전 메시지 로드",
       "loadingEarlierMessages": "이전 메시지 로드 중…",

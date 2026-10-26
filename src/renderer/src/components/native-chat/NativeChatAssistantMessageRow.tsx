@@ -92,6 +92,7 @@ export function NativeChatAssistantMessageRow({
       {showControls ? (
         <NativeChatAgentControls
           messageId={message.id}
+          chapterKey={props.chapterKey}
           markdown={words}
           timestamp={message.timestamp}
           onScrollToTop={scrollToTop}

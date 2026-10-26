@@ -19466,6 +19466,8 @@
       "scrollMessageToTop": "Scroll this message to top",
       "newChatFromMessage": "New chat from this message",
       "editUserMessage": "Edit message",
+      "pinChapter": "Pin chapter",
+      "pinnedChapter": "Pinned chapter",
       "loadingEarlier": "Loading…",
       "loadEarlier": "Load earlier messages",
       "loadingEarlierMessages": "Loading earlier messages…",

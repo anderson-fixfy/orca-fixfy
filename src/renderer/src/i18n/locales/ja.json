@@ -19076,6 +19076,8 @@
       "scrollMessageToTop": "このメッセージを一番上までスクロールします",
       "newChatFromMessage": "このメッセージから新しいチャット",
       "editUserMessage": "メッセージを編集",
+      "pinChapter": "章を固定",
+      "pinnedChapter": "固定された章",
       "loadingEarlier": "読み込み中…",
       "loadEarlier": "以前のメッセージをロードする",
       "loadingEarlierMessages": "以前のメッセージを読み込み中…",
