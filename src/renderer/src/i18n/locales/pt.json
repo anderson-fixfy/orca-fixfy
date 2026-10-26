@@ -19495,6 +19495,7 @@
         "copy": "Copiar mensagem"
       },
       "scrollMessageToTop": "Rolar esta mensagem para o topo",
+      "newChatFromMessage": "Novo chat a partir desta mensagem",
       "loadingEarlier": "Carregando…",
       "loadEarlier": "Carregar mensagens anteriores",
       "railLabel": "Suas mensagens",

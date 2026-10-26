@@ -19074,6 +19074,7 @@
         "copy": "메시지 복사"
       },
       "scrollMessageToTop": "이 메시지를 맨 위로 스크롤",
+      "newChatFromMessage": "이 메시지로 새 채팅",
       "loadingEarlier": "로드 중…",
       "loadEarlier": "이전 메시지 로드",
       "loadingEarlierMessages": "이전 메시지 로드 중…",

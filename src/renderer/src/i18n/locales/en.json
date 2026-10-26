@@ -19460,6 +19460,7 @@
         "copy": "Copy message"
       },
       "scrollMessageToTop": "Scroll this message to top",
+      "newChatFromMessage": "New chat from this message",
       "loadingEarlier": "Loading…",
       "loadEarlier": "Load earlier messages",
       "loadingEarlierMessages": "Loading earlier messages…",

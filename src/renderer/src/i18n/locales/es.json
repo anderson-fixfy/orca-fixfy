@@ -19044,6 +19044,7 @@
         "copy": "Copiar mensaje"
       },
       "scrollMessageToTop": "Desplazar este mensaje hacia arriba",
+      "newChatFromMessage": "Nuevo chat a partir de este mensaje",
       "loadingEarlier": "Cargando…",
       "loadEarlier": "Cargar mensajes anteriores",
       "loadingEarlierMessages": "Cargando mensajes anteriores…",
