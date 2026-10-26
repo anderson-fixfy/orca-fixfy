@@ -5,6 +5,8 @@ import {
   type ConversationCommandParams
 } from './structured-conversation-command'
 import { runStructuredCompaction } from './structured-conversation-compaction'
+import { runStructuredAccountSwitch } from './structured-agent-session-account-switch'
+import type { AgentSessionAccountSwitchParams } from '../../../shared/agent-session-account-switch'
 import type { StructuredAgentSessionMutationContext } from './structured-agent-session-host-mutations'
 import type { StructuredAgentSessionCaller } from './structured-agent-session-host-types'
 import type { StructuredAgentSessionHost } from './structured-agent-session-host'
@@ -24,6 +26,10 @@ export class StructuredConversationCommandController {
     sendStructuredAgentSessionTurn(this.context(), caller, params, {
       clearInFlight: this.pending.has(params.envelope.sessionId)
     })
+
+  /** Moves the chat to another account in its lane, as `/clear` runs; a later send starts it there. */
+  switchAccount = (caller: StructuredAgentSessionCaller, params: AgentSessionAccountSwitchParams) =>
+    runStructuredAccountSwitch(this.context(), caller, params)
 
   run = (caller: StructuredAgentSessionCaller, params: ConversationCommandParams) => {
     if (params.command === 'compact') {

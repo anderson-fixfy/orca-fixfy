@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useSyncExternalStore } from 'react'
+import type { AgentSessionAccountSwitchResult } from '../../../../shared/agent-session-account-switch'
 import type { AgentSessionStatusSummary } from '../../../../shared/agent-session-wire'
 import type { RuntimeClientTarget } from '../../../../shared/runtime-client-target'
 import { getStructuredAgentSessionStatusFeed } from '@/runtime/structured-agent-session-status-feed'
@@ -96,4 +97,29 @@ export function useStructuredAgentSessionRewindBlockedReason(
     () => feed.getSnapshot().get(sessionId)?.rewindBlockedReason ?? null,
     () => null
   )
+}
+
+/** The account a person switched this chat to; null while it follows the selected account. */
+export function useStructuredAgentSessionAccountSwitch(
+  sessionId: string,
+  target: RuntimeClientTarget
+): AgentSessionAccountSwitchResult | null {
+  const feed = useMemo(() => getStructuredAgentSessionStatusFeed(target), [target])
+  useEffect(() => feed.activate(), [feed])
+  // One string, so a status that leaves the account alone does not re-render the chat.
+  const key = useSyncExternalStore(
+    feed.subscribe,
+    () => {
+      const switched = feed.getSnapshot().get(sessionId)?.accountSwitch
+      return switched ? `${switched.accountId ?? ''}\u0000${switched.account}` : ''
+    },
+    () => ''
+  )
+  return useMemo(() => {
+    if (!key) {
+      return null
+    }
+    const [accountId = '', account = ''] = key.split('\u0000')
+    return { accountId: accountId || null, account }
+  }, [key])
 }

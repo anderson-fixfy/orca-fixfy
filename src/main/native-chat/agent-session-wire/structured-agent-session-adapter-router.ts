@@ -71,6 +71,21 @@ export class StructuredAgentSessionAdapterRouter implements StructuredAgentSessi
       input
     ) ?? Promise.resolve({ ok: false, reason: 'unsupported' })
 
+  prepareAccountSwitch: NonNullable<StructuredAgentSessionAdapter['prepareAccountSwitch']> = (
+    input
+  ) =>
+    this.capabilityOwner(
+      input.record.sessionId,
+      input.record.provider
+    )?.adapter.prepareAccountSwitch?.(input) ??
+    Promise.resolve({ ok: false, reason: 'unknown-account' })
+
+  forkThroughMessage: NonNullable<StructuredAgentSessionAdapter['forkThroughMessage']> = (input) =>
+    this.capabilityOwner(
+      input.record.sessionId,
+      input.record.provider
+    )?.adapter.forkThroughMessage?.(input) ?? Promise.resolve({ ok: false, reason: 'unsupported' })
+
   recoverRewind: NonNullable<StructuredAgentSessionAdapter['recoverRewind']> = (input) =>
     this.owner(input.sessionId).recoverRewind?.(input) ??
     Promise.resolve({ ok: false, reason: 'unsupported' })

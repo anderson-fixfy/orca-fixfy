@@ -19039,6 +19039,13 @@
         "copy": "复制消息"
       },
       "scrollMessageToTop": "将此消息滚动到顶部",
+      "newChatFromMessage": "从此消息新建聊天",
+      "editUserMessage": "编辑消息",
+      "pinChapter": "固定章节",
+      "pinnedChapter": "已固定的章节",
+      "forkFromMessage": "从此消息派生",
+      "forkFromMessageFailed": "无法派生此聊天。",
+      "forkFromMessageNotSaved": "Claude 尚未保存此消息。请稍后再试。",
       "loadingEarlier": "正在加载…",
       "loadEarlier": "加载更早的消息",
       "loadingEarlierMessages": "正在加载更早的消息…",
@@ -19319,6 +19326,12 @@
         "explanation": "继续后，智能体会先检查其上一步是否已完成。",
         "unconfirmed": "无法确认 {{agent}} 是否收到“继续”。在重试之前请检查聊天记录。",
         "usageLimitExplanation": "让智能体从中断处继续。请在上限重置后使用。"
+      },
+      "usageLimitAutoResume": {
+        "resume": "自动恢复",
+        "explanation": "在上限重置一分钟后的 {{time}}，即使此窗口已关闭，也会在此聊天中发送“继续”。",
+        "scheduled": "将于 {{time}} 恢复",
+        "cancel": "取消"
       },
       "rewind": {
         "unsupported": "此聊天无法返回到更早的消息。",
@@ -19784,6 +19797,10 @@
         "queueFollowUpsTitle": "将后续消息加入队列",
         "queueFollowUpsCopy": "智能体工作时发送的消息会以卡片形式等待，你可以立即发送、编辑或删除。带图片的消息会立即发送。",
         "queueFollowUpsToggleLabel": "切换后续消息队列",
+        "markdownComposerTitle": "Markdown 预览模式",
+        "markdownComposerCopy": "消息框以已格式化的形式显示 Markdown，与 Markdown 编辑器相同。发送的内容仍为 Markdown。",
+        "markdownComposerToggleLabel": "切换 Markdown 预览模式",
+        "markdownComposerSearchFormatting": "格式",
         "inlineVisualsTitle": "内联可视化",
         "inlineVisualsCopy": "允许智能体在其回复中显示图表、示意图和原型图。适用于新启动的聊天。",
         "inlineVisualsToggleLabel": "切换内联可视化",

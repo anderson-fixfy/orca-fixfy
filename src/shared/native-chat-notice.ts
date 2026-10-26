@@ -1,18 +1,20 @@
-// How a chat draws a row the agent did not write in its own words: compaction and clear markers,
-// command output, host status, plans, and warnings or errors. Desktop translates these words (they
-// are its fallbacks); the phone shows them as they are.
+// How a chat draws a row the agent did not write in its own words: compaction, clear and account
+// switch markers, command output, host status, plans, and warnings or errors. Desktop translates
+// these words (they are its fallbacks); the phone shows them as they are.
 
 import {
   isAgentSessionHostStatusPresentation,
   type AgentSessionHostStatusPresentation
 } from './agent-session-host-status-rows'
 import { AGENT_SESSION_ORCA_STOP_PRESENTATION } from './agent-session-orca-stop'
+import { AGENT_SESSION_ACCOUNT_SWITCHED_PRESENTATION } from './agent-session-account-switch'
 import { NATIVE_CHAT_STOPPED_BEFORE_START_PRESENTATION } from './native-chat-stopped-before-start'
 import type { NativeChatBlock, NativeChatTextBlock } from './native-chat-types'
 
 export const NATIVE_CHAT_NOTICE_COPY = {
   compaction: 'Context compacted',
   contextCleared: 'Context cleared',
+  accountSwitched: 'Account switched - {{account}}',
   plan: 'Plan'
 } as const
 
@@ -21,6 +23,8 @@ export type NativeChatNoticeTone = 'warning' | 'error' | 'notice'
 export type NativeChatNoticeLook =
   /** A rule across the chat with its label. */
   | { kind: 'divider'; label: 'compaction' | 'contextCleared' }
+  /** The account a switch moved the chat to; the conversation above it goes on. */
+  | { kind: 'divider'; label: 'accountSwitched'; account: string }
   /** Laid out in columns, so drawn in monospace. */
   | { kind: 'command-output' }
   /** The host's line in the reader's words, drawn faint. */
@@ -48,6 +52,9 @@ export function nativeChatNoticeLook(block: NativeChatTextBlock): NativeChatNoti
   }
   if (presentation === 'context-cleared') {
     return { kind: 'divider', label: 'contextCleared' }
+  }
+  if (presentation === AGENT_SESSION_ACCOUNT_SWITCHED_PRESENTATION && block.accountSwitch) {
+    return { kind: 'divider', label: 'accountSwitched', account: block.accountSwitch.account }
   }
   if (presentation === 'command-output') {
     return { kind: 'command-output' }

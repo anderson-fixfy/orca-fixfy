@@ -34,6 +34,20 @@ export const getChatBehaviorEntriesByKey = createLocalizedCatalog(() => ({
       translate('components.settings.nativeChat.queueSearchSteer', 'steer')
     ]
   },
+  markdownComposer: {
+    targetSectionId: 'chat-markdown-composer',
+    title: translate(
+      'components.settings.nativeChat.markdownComposerTitle',
+      'Markdown preview mode'
+    ),
+    description: translate(
+      'components.settings.nativeChat.markdownComposerCopy',
+      'The message box shows Markdown already formatted, as the Markdown editor does. What you send stays Markdown.'
+    ),
+    keywords: [
+      translate('components.settings.nativeChat.markdownComposerSearchFormatting', 'formatting')
+    ]
+  },
   shellEnvironment: {
     targetSectionId: 'chat-shell-environment',
     title: translate(

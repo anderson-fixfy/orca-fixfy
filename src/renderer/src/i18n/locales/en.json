@@ -19123,6 +19123,7 @@
       },
       "notices": {
         "contextCleared": "Context cleared",
+        "accountSwitched": "Account switched - {{account}}",
         "compaction": "Context compacted",
         "details": "Details",
         "plan": "Plan",
@@ -19205,6 +19206,9 @@
         "noModelsMatch": "No models match your search.",
         "toggleOption": "Toggle {{value0}}",
         "pillAccessibleName": "{{value0}} {{value1}}",
+        "account": "Account",
+        "accountSwitching": "Switching account…",
+        "accountWaitForTurn": "Switch accounts after the current turn finishes.",
         "sentNotConfirmed": "Sent to the agent — not confirmed",
         "setWhenSessionStarts": "Set when the session starts.",
         "availableAfterSessionStarts": "Available after the session starts.",
@@ -19460,6 +19464,13 @@
         "copy": "Copy message"
       },
       "scrollMessageToTop": "Scroll this message to top",
+      "newChatFromMessage": "New chat from this message",
+      "editUserMessage": "Edit message",
+      "pinChapter": "Pin chapter",
+      "pinnedChapter": "Pinned chapter",
+      "forkFromMessage": "Fork from this message",
+      "forkFromMessageFailed": "Could not fork this chat.",
+      "forkFromMessageNotSaved": "Claude hasn't saved this message yet. Try again in a moment.",
       "loadingEarlier": "Loading…",
       "loadEarlier": "Load earlier messages",
       "loadingEarlierMessages": "Loading earlier messages…",
@@ -19671,6 +19682,12 @@
         "explanation": "Continue, and the agent first checks whether its last step finished.",
         "unconfirmed": "Couldn't confirm whether {{agent}} received Continue. Check the chat before trying again.",
         "usageLimitExplanation": "Asks the agent to continue where it left off. Use it once the limit resets."
+      },
+      "usageLimitAutoResume": {
+        "resume": "Resume automatically",
+        "explanation": "Sends Continue in this chat at {{time}}, a minute after the limit resets, even with this window closed.",
+        "scheduled": "Resumes at {{time}}",
+        "cancel": "Cancel"
       },
       "antigravitySignIn": {
         "sentence": "Antigravity isn't signed in. Sign in under <settings>Settings → Accounts → Antigravity</settings>. Then send your message again."
@@ -20074,6 +20091,10 @@
         "inlineVisualsToggleLabel": "Toggle inline visuals",
         "queueFollowUpsCopy": "Messages you send while the agent is working wait as cards you can steer, edit, or delete. Messages with images send right away.",
         "queueFollowUpsToggleLabel": "Toggle queue follow-ups",
+        "markdownComposerTitle": "Markdown preview mode",
+        "markdownComposerCopy": "The message box shows Markdown already formatted, as the Markdown editor does. What you send stays Markdown.",
+        "markdownComposerToggleLabel": "Toggle Markdown preview mode",
+        "markdownComposerSearchFormatting": "formatting",
         "behaviorTitle": "Behavior",
         "resumeSearchUpdate": "update",
         "resumeSearchRelaunch": "relaunch",

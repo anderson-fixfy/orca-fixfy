@@ -1,5 +1,9 @@
 import { isAgentSessionRewindRecord, type AgentSessionRewindRecord } from './agent-session-rewind'
 import { isAgentSessionLaunchArgs } from './agent-session-launch-args'
+import {
+  isAgentSessionAccountSwitchRecord,
+  type AgentSessionAccountSwitchRecord
+} from './agent-session-account-switch'
 import { isAgentSessionConversationName } from './agent-session-conversation-name'
 import {
   isPersistedAgentSessionHandoffStage,
@@ -149,6 +153,8 @@ export type AgentSessionRecord = {
   providerHandleChain: AgentSessionProviderHandleLink[]
   providerContextBoundary?: AgentSessionProviderContextBoundary
   accountHome: AgentSessionAccountHome
+  /** The account a person switched this chat to; launches run on it instead of the selection. */
+  accountSwitch?: AgentSessionAccountSwitchRecord
   /** The directory the provider first launched in, in the execution host's path syntax. Floating
    *  sessions resume here; worktree and folder ids still resolve by id to their durable place. */
   launchDirectory?: string
@@ -344,6 +350,8 @@ export function isPersistedAgentSessionRecord(
     isAgentSessionExecutionLocation(record.location) &&
     isStructuredAgentId(record.provider) &&
     isAgentSessionAccountHome(record.accountHome) &&
+    (record.accountSwitch === undefined ||
+      isAgentSessionAccountSwitchRecord(record.accountSwitch)) &&
     (record.launchDirectory === undefined ||
       isBoundedString(record.launchDirectory, MAX_PATH_LENGTH)) &&
     (record.options === undefined || isAgentSessionOptions(record.options)) &&

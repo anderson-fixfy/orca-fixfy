@@ -7,6 +7,10 @@ import {
   type AgentSessionRewindReason,
   type AgentSessionRewindResult
 } from './agent-session-rewind'
+import {
+  isAgentSessionAccountSwitchResult,
+  type AgentSessionAccountSwitchResult
+} from './agent-session-account-switch'
 /**
  * Durable client-operation ledger.
  *
@@ -44,6 +48,7 @@ export type AgentSessionOperationOutcome =
       sessionId: string
       conversationCommand?: AgentSessionConversationCommandResult
       rewind?: AgentSessionRewindResult
+      accountSwitch?: AgentSessionAccountSwitchResult
       /**
        * The full `agent.launch` answer. Recorded whole rather than rebuilt, because the preferred
        * mode and the reason a launch downgraded away from it cannot be recomputed once the user's
@@ -311,6 +316,8 @@ export function isAgentSessionOperationRow(value: unknown): value is AgentSessio
       (outcome.status === 'succeeded' &&
         typeof outcome.sessionId === 'string' &&
         (outcome.rewind === undefined || isAgentSessionRewindResult(outcome.rewind)) &&
+        (outcome.accountSwitch === undefined ||
+          isAgentSessionAccountSwitchResult(outcome.accountSwitch)) &&
         (outcome.conversationCommand === undefined ||
           isAgentSessionConversationCommandResult(outcome.conversationCommand))) ||
       (outcome.status === 'failed' && typeof outcome.code === 'string') ||

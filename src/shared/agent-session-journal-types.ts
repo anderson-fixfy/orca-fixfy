@@ -1,6 +1,6 @@
 import type { AgentJournalTurnScope } from './agent-session-journal-turn-scope'
 export type { AgentJournalTurnScope } from './agent-session-journal-turn-scope'
-import type { AgentSessionProviderContextBoundary } from './agent-session-provider-context'
+import type { AgentSessionDividerMarkers } from './agent-session-divider-markers'
 // ─── Canonical agent-session journal: cross-process wire shapes ─────────────
 // The host-owned timeline for a structured agent session. Everything here must
 // be plain JSON: rows are persisted verbatim and later republished to clients,
@@ -328,11 +328,10 @@ export type AgentJournalThreadGoalState =
   | { state: 'set'; goal: AgentJournalThreadGoal }
   | { state: 'cleared' }
 
-type AgentJournalStatusItemFields = {
+type AgentJournalStatusItemFields = AgentSessionDividerMarkers & {
   kind: 'status'
   /** Optional display hints; unknown values retain the ordinary text fallback. */
   presentation?: string
-  contextClear?: AgentSessionProviderContextBoundary
   tone?: string
   /** Legacy carrier of a turn record: written by hosts before v3, and published
    *  to clients that predate the `turn` item. New code reads turns through

@@ -1,3 +1,4 @@
+import type { NativeChatUsageLimitAutoResumeView } from './use-native-chat-usage-limit-auto-resume'
 import { createContext, useContext } from 'react'
 
 /** What a structured chat tells its rows about an Orca stop: the name of the machine whose Orca runs
@@ -15,6 +16,8 @@ export type NativeChatOrcaStopView = {
   usageLimitTurnItemId: string | null
   usageLimitContinueDisabled?: boolean
   continueUsageLimit: (hadFocus?: boolean) => void
+  /** Resume automatically beside that Continue; absent when the limit gave no reset time. */
+  usageLimitAutoResume?: NativeChatUsageLimitAutoResumeView | null
 }
 
 export const NativeChatOrcaStopContext = createContext<NativeChatOrcaStopView>({

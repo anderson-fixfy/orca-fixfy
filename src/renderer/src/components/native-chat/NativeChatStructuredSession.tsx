@@ -43,7 +43,7 @@ import { useNativeChatComposerError } from './use-native-chat-composer-notice'
 import { useNativeChatProvisionalLaunch } from './use-native-chat-provisional-launch'
 import { useStructuredAgentSessionHostExecution } from './StructuredAgentSessionStatusBridge'
 import { useNativeChatRewindHost } from './use-native-chat-rewind-host'
-import { NativeChatRewindContext } from './native-chat-rewind-context'
+import { NativeChatRowActionsProvider } from './NativeChatRowActionsProvider'
 import { NativeChatQueuedMessageList } from './NativeChatQueuedMessageList'
 import { nativeChatStructuredStopControls } from './native-chat-structured-stop-controls'
 import { chatApprovalFromJournal } from './native-chat-interactive-prompt'
@@ -305,7 +305,7 @@ export function NativeChatStructuredSession(
         ) : viewState.kind === 'empty' ? (
           <NativeChatEmptyPane slot={install.slot} agent={props.agent} />
         ) : (
-          <NativeChatRewindContext.Provider value={controller.rewind.surface}>
+          <NativeChatRowActionsProvider chat={props} rewind={controller.rewind.surface}>
             <NativeChatOrcaStopContext.Provider value={continuation.view}>
               <NativeChatClaudeSignInContext.Provider value={claudeSignIn}>
                 <NativeChatMessageList
@@ -333,7 +333,7 @@ export function NativeChatStructuredSession(
                 />
               </NativeChatClaudeSignInContext.Provider>
             </NativeChatOrcaStopContext.Provider>
-          </NativeChatRewindContext.Provider>
+          </NativeChatRowActionsProvider>
         )}
       </NativeChatContextClearFade>
       {readFailedFinally ? null : (

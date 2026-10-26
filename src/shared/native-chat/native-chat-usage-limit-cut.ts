@@ -19,14 +19,21 @@ function usageLimitOfRow(item: AgentJournalRenderItem): AgentSessionUsageLimit |
   return fact?.kind === 'usageLimitReached' ? (fact.usageLimit ?? {}) : null
 }
 
-/** The latest root turn, when a usage limit ended it and nothing was sent since. Null otherwise. */
+/** The latest root turn, when a usage limit ended it and nothing was sent since, with the reset
+ *  time its row reports. Null otherwise. */
 export function latestNativeChatUsageLimitCut(
   items: readonly AgentJournalRenderItem[],
   submissions: readonly Pick<AgentJournalSubmission, 'dispatchState'>[]
-): { turnItemId: string } | null {
+): { turnItemId: string; resetsAt?: number } | null {
   const latest = latestNativeChatTurnSinceRequest(items, submissions)
-  return latest?.verdict === 'failure' &&
-    findInNativeChatTurn(items, latest.turnItem.itemId, usageLimitOfRow) !== null
-    ? { turnItemId: latest.turnItem.itemId }
-    : null
+  if (latest?.verdict !== 'failure') {
+    return null
+  }
+  const limit = findInNativeChatTurn(items, latest.turnItem.itemId, usageLimitOfRow)
+  return limit === null
+    ? null
+    : {
+        turnItemId: latest.turnItem.itemId,
+        ...(limit.resetsAt === undefined ? {} : { resetsAt: limit.resetsAt })
+      }
 }

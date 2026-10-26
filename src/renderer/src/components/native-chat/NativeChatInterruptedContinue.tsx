@@ -27,6 +27,7 @@ import {
 import { AGENT_SESSION_CONTINUE_INTERRUPTED_RUNTIME_CAPABILITY } from '../../../../shared/agent-session-continue-interrupted-capability'
 import type { NativeChatOrcaStopView } from './native-chat-orca-stop-context'
 import { useStructuredAgentSessionHostLabel } from './use-structured-agent-session-host-label'
+import { useNativeChatUsageLimitAutoResume } from './use-native-chat-usage-limit-auto-resume'
 import { useNativeChatRestartResuming } from '../native-chat-resume-on-restart-store'
 import { useNativeChatLaunchResumePending } from '../native-chat-launch-resume-decision'
 import type { NativeChatComposerNoticeContent } from './native-chat-composer-notice'
@@ -91,6 +92,7 @@ export function useNativeChatInterruptedContinuation(input: {
     () => latestNativeChatUsageLimitCut(input.journalItems, input.submissions),
     [input.journalItems, input.submissions]
   )
+  const usageLimitAutoResume = useNativeChatUsageLimitAutoResume(target, sessionId, usageLimitCut)
   // The cut this client already asked to continue: hidden until the journal shows what came of it.
   const [asked, setAsked] = useState<string | null>(null)
   const [usageFailure, setUsageFailure] = useState<{
@@ -182,7 +184,8 @@ export function useNativeChatInterruptedContinuation(input: {
       continueNow,
       usageLimitTurnItemId,
       usageLimitContinueDisabled: usageCapability === 'unknown',
-      continueUsageLimit
+      continueUsageLimit,
+      usageLimitAutoResume
     }),
     [
       hostLabel,
@@ -192,7 +195,8 @@ export function useNativeChatInterruptedContinuation(input: {
       continueNow,
       usageLimitTurnItemId,
       usageCapability,
-      continueUsageLimit
+      continueUsageLimit,
+      usageLimitAutoResume
     ]
   )
   const failedHere =

@@ -2,12 +2,20 @@ import { NativeChatFileReferencePill } from './NativeChatFileReferencePill'
 import { NativeChatSkillPill, skillLabel } from './NativeChatSkillPill'
 import { NativeChatImageReferencePill } from './NativeChatImageReferencePill'
 import { formatNativeChatFileReference } from '../../../../shared/agent-image-paste'
-import { imageReferenceToken } from '../../../../shared/native-chat-image-reference'
-import { FILE_REFERENCE_NODE, IMAGE_REFERENCE_NODE } from './native-chat-prompt-document-text'
+import {
+  imageReferenceToken,
+  leadingImageReference
+} from '../../../../shared/native-chat-image-reference'
+import { NATIVE_CHAT_PASTED_TEXT_TOKEN } from './native-chat-pasted-text-reference'
+import {
+  FILE_REFERENCE_NODE,
+  IMAGE_REFERENCE_NODE,
+  promptTextContent
+} from './native-chat-prompt-document-text'
 import { ReactNodeViewRenderer, Node, type JSONContent } from '@tiptap/react'
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model'
 import type { AgentJournalSkillRef } from '../../../../shared/agent-session-journal-types'
-export { promptTextContent } from './native-chat-prompt-document-text'
+export { promptTextContent }
 
 export const NativeChatSkill = Node.create({
   name: 'nativeChatSkill',
@@ -19,6 +27,7 @@ export const NativeChatSkill = Node.create({
   // `path`: the file the agent selects the skill by, when it reported one; the text stays the token.
   addAttributes: () => ({ token: { default: '' }, path: { default: '' } }),
   renderText: ({ node }) => node.attrs.token,
+  renderMarkdown: (node) => String(node.attrs?.token ?? ''),
   renderHTML: ({ node }) => [
     'span',
     {
@@ -42,6 +51,20 @@ export const NativeChatFileReference = Node.create({
   addNodeView: () => ReactNodeViewRenderer(NativeChatFileReferencePill),
   addAttributes: () => ({ token: { default: '' }, path: { default: '' } }),
   renderText: ({ node }) => node.attrs.token,
+  // Markdown names only a paste by its token; a path read back is the `@path` text it was sent as.
+  markdownTokenName: FILE_REFERENCE_NODE,
+  markdownTokenizer: {
+    name: FILE_REFERENCE_NODE,
+    level: 'inline',
+    start: (source) => source.indexOf('[Pasted text]('),
+    tokenize: (source) => {
+      const raw = new RegExp(`^${NATIVE_CHAT_PASTED_TEXT_TOKEN.source}`).exec(source)?.[0]
+      return raw ? { type: FILE_REFERENCE_NODE, raw } : undefined
+    }
+  },
+  parseMarkdown: (token, helpers) =>
+    helpers.createNode(FILE_REFERENCE_NODE, { token: token.raw ?? '', path: '' }),
+  renderMarkdown: (node) => String(node.attrs?.token ?? ''),
   renderHTML: ({ node }) => ['span', { 'data-native-chat-file-reference': node.attrs.path }]
 })
 
@@ -55,6 +78,21 @@ export const NativeChatImageReference = Node.create({
   addNodeView: () => ReactNodeViewRenderer(NativeChatImageReferencePill),
   addAttributes: () => ({ attachmentId: { default: '' } }),
   renderText: ({ node }) => imageReferenceToken(node.attrs.attachmentId),
+  markdownTokenName: IMAGE_REFERENCE_NODE,
+  markdownTokenizer: {
+    name: IMAGE_REFERENCE_NODE,
+    level: 'inline',
+    start: (source) => source.indexOf('[Image]('),
+    tokenize: (source) => {
+      const reference = leadingImageReference(source)
+      return reference
+        ? { type: IMAGE_REFERENCE_NODE, raw: reference.raw, text: reference.attachmentId }
+        : undefined
+    }
+  },
+  parseMarkdown: (token, helpers) =>
+    helpers.createNode(IMAGE_REFERENCE_NODE, { attachmentId: token.text ?? '' }),
+  renderMarkdown: (node) => imageReferenceToken(String(node.attrs?.attachmentId ?? '')),
   renderHTML: ({ node }) => [
     'span',
     { 'data-native-chat-image-reference': node.attrs.attachmentId }
@@ -96,6 +134,14 @@ export function promptLeafText(node: ProseMirrorNode): string {
 
 export function promptText(doc: ProseMirrorNode, from = 0, to = doc.content.size): string {
   return doc.textBetween(from, to, '\n', promptLeafText)
+}
+
+/** How a document reads as the prompt it sends, and where its carets fall in that text. */
+export type NativeChatPromptCoordinates = {
+  text: (doc: ProseMirrorNode) => string
+  offset: (doc: ProseMirrorNode, position: number) => number
+  position: (doc: ProseMirrorNode, offset: number, side?: 'before' | 'after') => number
+  content: (text: string) => JSONContent
 }
 
 /** The plain-text caret for a document position. */
@@ -141,4 +187,11 @@ export function promptTextPosition(
     blockStart += block.nodeSize
   }
   return end
+}
+
+export const PLAIN_PROMPT_COORDINATES: NativeChatPromptCoordinates = {
+  text: (doc) => promptText(doc),
+  offset: promptTextOffset,
+  position: promptTextPosition,
+  content: promptTextContent
 }

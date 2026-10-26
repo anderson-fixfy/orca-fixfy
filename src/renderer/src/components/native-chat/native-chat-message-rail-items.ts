@@ -39,8 +39,13 @@ export type NativeChatRailItem = {
   hasImages: boolean
   /** The host's preview of the agent's reply, on an outline item only. */
   reply?: string
-  /** On an outline item that did not open its turn: the message that did. */
+  /** On an item that did not open its turn: the message that did. */
   turnKey?: string
+}
+
+/** The chapter a tick belongs to: its turn, so a steer shares its turn's pin. */
+export function nativeChatRailChapterKey(item: NativeChatRailItem): string {
+  return item.turnKey ?? item.id
 }
 
 /** A user message older than the loaded window, oldest first. */
@@ -99,14 +104,22 @@ export function buildNativeChatRailItems(
     }
     const preview = nativeChatUserMessagePreview(slot.message.blocks)
     const hasImages = preview.imageCount > 0
+    const turnKey = slot.turnKey === slot.message.id ? undefined : slot.turnKey
     const prior = previous[items.length]
     items.push(
       prior?.id === slot.message.id &&
         prior.slotIndex === slotIndex &&
         prior.text === preview.text &&
-        prior.hasImages === hasImages
+        prior.hasImages === hasImages &&
+        prior.turnKey === turnKey
         ? prior
-        : { id: slot.message.id, slotIndex, text: preview.text, hasImages }
+        : {
+            id: slot.message.id,
+            slotIndex,
+            text: preview.text,
+            hasImages,
+            ...(turnKey === undefined ? {} : { turnKey })
+          }
     )
   }
   return items.length === previous.length && items.every((item, index) => item === previous[index])

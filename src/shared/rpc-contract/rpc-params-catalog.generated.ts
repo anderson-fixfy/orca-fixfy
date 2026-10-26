@@ -549,6 +549,7 @@ import {
   SshTargetAdd,
   SshTargetUpdate
 } from './ssh-params'
+import { SwitchAccountParams } from './structured-agent-session-account-switch-params'
 import { ContinueInterruptedParams } from './structured-agent-session-continue-params'
 import {
   AcknowledgeAttentionParams,
@@ -584,6 +585,11 @@ import {
   QueuedMessageEditHoldParams,
   QueuedMessageUpdateParams
 } from './structured-agent-session-queued-edit-params'
+import {
+  UsageLimitAutoResumeCancelParams,
+  UsageLimitAutoResumeListParams,
+  UsageLimitAutoResumeScheduleParams
+} from './structured-agent-session-usage-limit-auto-resume-params'
 import { TerminalDaemonRestartSeveredParams } from './terminal-daemon-params'
 import { TerminalAdoptOrphans } from './terminal-orphan-params'
 import { TerminalQuickCommandsUpdate } from './terminal-quick-command-params'
@@ -732,6 +738,7 @@ export const RPC_PARAMS_BY_METHOD = {
   'agentSession.createSupport': CreateSupportParams,
   'agentSession.currentRequests': CurrentRequestsParams,
   'agentSession.ensure': AttachParams,
+  'agentSession.forkThroughMessage': ItemParams,
   'agentSession.handoffStatus': HandoffStatusParams,
   'agentSession.history': HistoryParams,
   'agentSession.hold': HoldParams,
@@ -761,8 +768,12 @@ export const RPC_PARAMS_BY_METHOD = {
   'agentSession.subscribeAvailability': AvailabilityParams,
   'agentSession.subscribeStatus': null,
   'agentSession.subscribeTurnCompletions': SubscribeTurnCompletionsParams,
+  'agentSession.switchAccount': SwitchAccountParams,
   'agentSession.threadGoal': ThreadGoalParams,
   'agentSession.unsubscribe': UnsubscribeParams,
+  'agentSession.usageLimitAutoResume': UsageLimitAutoResumeScheduleParams,
+  'agentSession.usageLimitAutoResumeCancel': UsageLimitAutoResumeCancelParams,
+  'agentSession.usageLimitAutoResumeList': UsageLimitAutoResumeListParams,
   'agentSessionAttachment.read': AttachmentReadParams,
   'agentSessionAttachment.uploadAbort': AttachmentUploadIdParams,
   'agentSessionAttachment.uploadAppend': AttachmentUploadAppendParams,

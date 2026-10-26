@@ -40,7 +40,7 @@ import { sleepStructuredAgentSessionWorkspace } from './structured-agent-session
 export type { StructuredAgentSessionHostDeps } from './structured-agent-session-host-types'
 
 export class StructuredAgentSessionHost {
-  private readonly conversationCommands = new StructuredConversationCommandController(
+  readonly conversationCommands = new StructuredConversationCommandController(
     () => this.mutationContext(),
     this
   )

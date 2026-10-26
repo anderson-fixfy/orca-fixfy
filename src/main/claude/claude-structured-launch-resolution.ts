@@ -1,5 +1,6 @@
 import { activeProviderContext } from '../../shared/agent-session-provider-context'
 import { getClaudeProfileRouter } from '../claude-accounts/claude-profile-installed-router'
+import { claudeLaunchAccountId } from '../claude-accounts/claude-account-launch'
 import { requireLegacyAgentSessionAccountHome } from '../../shared/agent-session-account-home'
 import type {
   Options as ClaudeAgentSdkOptions,
@@ -225,7 +226,12 @@ export function claudeStructuredLaunchPart(
       sources,
       { runtimeOnPath: false }
     )
-    const launchHome = await resolveClaudeStructuredLaunchHome(router, env, accountHome.path)
+    const launchHome = await resolveClaudeStructuredLaunchHome(
+      router,
+      env,
+      accountHome.path,
+      record.accountSwitch
+    )
     const resumesTranscript = resumedWithoutRouter ?? (await resumes(launchHome))
     if (fork?.throughEntryId && !resumesTranscript) {
       // Fork sources must pass the same account-history check as resumes.
@@ -240,7 +246,11 @@ export function claudeStructuredLaunchPart(
     return {
       launch: {
         pathToClaudeCodeExecutable: command,
-        account,
+        account: record.accountSwitch
+          ? router && claudeLaunchAccountId(router, record.accountSwitch.accountId) !== null
+            ? 'managed'
+            : 'system'
+          : account,
         options: {
           ...CLAUDE_STRUCTURED_BASE_OPTIONS,
           ...permission,

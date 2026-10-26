@@ -7,6 +7,12 @@ export function imageReferenceToken(attachmentId: string): string {
   return `[Image](orca-image:${attachmentId})`
 }
 
+/** The token that opens `text`, if one does. */
+export function leadingImageReference(text: string): { raw: string; attachmentId: string } | null {
+  const match = new RegExp(`^${IMAGE_REFERENCES.source}`).exec(text)
+  return match ? { raw: match[0], attachmentId: match[1] ?? '' } : null
+}
+
 /** Spaces keep inserted chips separate from the words on either side of the caret. */
 export function imageReferenceInsertion(
   before: string,
