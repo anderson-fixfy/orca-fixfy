@@ -58,7 +58,9 @@ needed. Things to know:
 Ordinary installs include native optional dependencies for the current OS and CPU only.
 Before a cross-architecture build, run `pnpm install:release` to add the other CPU's variants.
 `pnpm build:mac` packages only the host CPU's `.app`, signed ad hoc or with the identity named
-in `CSC_NAME` (hardened runtime on).
+in `CSC_NAME` (hardened runtime on). `pnpm build:win` packages an unsigned x64 NSIS installer and
+needs Rust (https://rustup.rs) for the native CLI launcher and agent hook. Both local builds
+stamp a `-local.<timestamp>.<commit>` version, which turns the in-app updater off.
 
 Linux `pnpm build`, `pnpm build:native`, and Linux packaging require a running Docker
 daemon to build the clipboard helper against Ubuntu 20.04 rather than the host's
