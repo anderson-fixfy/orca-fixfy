@@ -19040,6 +19040,7 @@
       },
       "scrollMessageToTop": "将此消息滚动到顶部",
       "newChatFromMessage": "从此消息新建聊天",
+      "editUserMessage": "编辑消息",
       "loadingEarlier": "正在加载…",
       "loadEarlier": "加载更早的消息",
       "loadingEarlierMessages": "正在加载更早的消息…",

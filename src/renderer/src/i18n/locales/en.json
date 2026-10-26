@@ -19461,6 +19461,7 @@
       },
       "scrollMessageToTop": "Scroll this message to top",
       "newChatFromMessage": "New chat from this message",
+      "editUserMessage": "Edit message",
       "loadingEarlier": "Loading…",
       "loadEarlier": "Load earlier messages",
       "loadingEarlierMessages": "Loading earlier messages…",

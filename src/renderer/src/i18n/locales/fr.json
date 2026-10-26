@@ -19185,6 +19185,7 @@
       },
       "scrollMessageToTop": "Revenir au début du message",
       "newChatFromMessage": "Nouveau chat à partir de ce message",
+      "editUserMessage": "Modifier le message",
       "loadingEarlier": "Chargement…",
       "loadEarlier": "Charger les messages précédents",
       "loadingEarlierMessages": "Chargement des messages précédents…",
