@@ -659,6 +659,9 @@ module.exports = {
       ...macTerminalHostSignIgnore
     ],
     extendInfo: macUsageDescriptions,
+    // Why: a local build is never notarized, and osx-sign's per-file timestamp round trip
+    // dominates its signing time and fails it when Apple's server misses a reply.
+    ...(isMacRelease ? {} : { timestamp: 'none' }),
     // Why: an ad-hoc local build fails library validation under hardened runtime;
     // a local build signed by a named identity keeps it, like a release.
     hardenedRuntime: isMacHardenedRuntime,
