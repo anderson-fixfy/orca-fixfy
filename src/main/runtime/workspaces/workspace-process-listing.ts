@@ -281,9 +281,7 @@ export abstract class OrcaRuntimeWithGetWorktreePs extends OrcaRuntimeWithWorktr
       // Structured chat has no CLI hooks; this projection drives first-work renaming.
       onSessionStatusChanged: (summary, options) => {
         this.onStructuredSessionStatusForMail(summary)
-        void fixfyRenameChatOnPrompt(summary, options, (workspaceId, sessionId) =>
-          this.refreshStructuredConversationTabTitle(workspaceId, sessionId)
-        )
+        void fixfyRenameChatOnPrompt(summary, options)
         nameChat(summary, options)
         void maybeAutoRenameWorkspaceOnFirstStructuredTurn(
           summary,

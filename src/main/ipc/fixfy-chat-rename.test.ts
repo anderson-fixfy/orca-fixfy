@@ -5,7 +5,6 @@ import type { AgentSessionStatusSummary } from '../../shared/agent-session-wire'
 import {
   type AgentSessionUserNameWrite,
   compareAndSetAgentSessionRecordName,
-  setAgentSessionRecordConversationName,
   setAgentSessionRecordUserNameThrough
 } from '../runtime/agent-session-record-conversation-name'
 import {
@@ -28,8 +27,6 @@ function rig(firstPrompt: string) {
   }
   const store = {
     getRecord: () => record,
-    setConversationName: (_id: string, name: string | null) =>
-      mutate((current) => setAgentSessionRecordConversationName(current, name, Date.now())),
     compareAndSetConversationName: (_id: string, name: string | null, expected: string | null) =>
       compareAndSetAgentSessionRecordName(mutate, name, expected),
     setUserConversationName: (_id: string, name: string, write: AgentSessionUserNameWrite) =>
@@ -42,6 +39,7 @@ function rig(firstPrompt: string) {
         finishGeneration = resolve
       })
   )
+  const onNamed = vi.fn()
   const nameChat = createStructuredChatNamingHandler({
     getStore: () => store,
     getSettings: () => ({}),
@@ -50,13 +48,14 @@ function rig(firstPrompt: string) {
     readFirstPrompt: async () => firstPrompt,
     readJournalFirstPrompt: async () => firstPrompt,
     generate,
-    onNamed: vi.fn(),
+    onNamed,
     logger: { warn: vi.fn(), error: vi.fn() },
     wait: async () => {}
   })
-  const publish = vi.fn()
-  const retitle = vi.fn()
-  const rename = createFixfyChatRename({ getStore: () => store, publish, warn: vi.fn() })
+  const rename = createFixfyChatRename({
+    setUserName: (sessionId, name) => nameChat.setUserName(sessionId, name, 'rename'),
+    warn: vi.fn()
+  })
   const summary = (latestPrompt: string): AgentSessionStatusSummary => ({
     sessionId: record.sessionId,
     workspaceId: record.location.workspaceId,
@@ -69,12 +68,12 @@ function rig(firstPrompt: string) {
     nameChat,
     generate,
     finishGeneration: (result: StructuredChatNameGeneration) => finishGeneration(result),
-    rename: (prompt: string, options = { replay: false }) =>
-      rename(summary(prompt), options, retitle),
+    rename: (prompt: string, options = { replay: false }) => rename(summary(prompt), options),
     summary,
-    publish,
-    retitle,
-    name: () => record.conversationName
+    onNamed,
+    sessionId: () => record.sessionId,
+    name: () => record.conversationName,
+    source: () => record.conversationNameSource
   }
 }
 
@@ -97,8 +96,8 @@ describe('createFixfyChatRename', () => {
     await settle()
     expect(state.name()).toBe('fixfy-f0')
     expect(state.generate).not.toHaveBeenCalled()
-    expect(state.publish).toHaveBeenCalledTimes(1)
-    expect(state.retitle).toHaveBeenCalledWith(summary.workspaceId, summary.sessionId)
+    expect(state.source()).toBe('user')
+    expect(state.onNamed).toHaveBeenCalledWith(summary.workspaceId, summary.sessionId)
   })
 
   it('keeps the /rename name when it lands after the seed and before the generated name', async () => {
@@ -135,6 +134,16 @@ describe('createFixfyChatRename', () => {
     await state.rename('ship it')
     await state.rename('/rename')
     expect(state.name()).toBe('first')
-    expect(state.publish).toHaveBeenCalledTimes(1)
+    expect(state.onNamed).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the /rename name when automatic naming runs again', async () => {
+    const state = rig('fix the login flow')
+    await state.rename('/rename login-bug')
+    state.nameChat.regenerate(state.sessionId())
+    state.finishGeneration({ name: 'auth/login' })
+    await settle()
+    expect(state.name()).toBe('login-bug')
+    expect(state.source()).toBe('user')
   })
 })
