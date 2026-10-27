@@ -1,0 +1,73 @@
+name: Local Windows Installer
+
+# Why a runner: build:win compiles patched C++ addons (node-pty, windows-process-tree,
+# @orca/windows-*) with MSVC, which neither node-gyp nor a wine container can do from macOS.
+# Same unsigned, updater-off `-local.<ms>.<commit>` installer `pnpm run build:win` makes on Windows.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: build-win-local-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository != 'stablyai/orca'
+    runs-on: windows-2022
+    permissions:
+      contents: read
+    timeout-minutes: 120
+    env:
+      ORCA_BACKGROUND_LAUNCH: '1'
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      # pnpm must be on PATH before setup-node so setup-node can locate the store.
+      - name: Setup pnpm
+        uses: pnpm/setup@v2
+        with:
+          install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          check-latest: true
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            mobile/pnpm-lock.yaml
+
+      - name: Cache electron-builder downloads
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~\AppData\Local\electron\Cache
+            ~\AppData\Local\electron-builder\Cache
+          key: electron-builder-win-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            electron-builder-win-
+
+      # Why retried: electron's postinstall pulls its binary from a CDN that returns transient 504s.
+      - name: Install dependencies
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: pnpm install --frozen-lockfile
+
+      - name: Build the x64 installer
+        shell: bash
+        run: pnpm run build:win
+
+      - name: Upload the installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: orca-windows-setup-x64
+          path: dist/orca-windows-setup.exe
+          if-no-files-found: error
+          retention-days: 14
