@@ -6,7 +6,7 @@ import { translate } from '@/i18n/i18n'
 import { formatUsageLimitResetClock } from '../../../../shared/agent-session-usage-limit'
 import type { NativeChatUsageLimitAutoResumeView } from './use-native-chat-usage-limit-auto-resume'
 
-/** Beside Continue on a usage limit's row: schedule it for the reset, or the schedule and Cancel. */
+/** On a usage limit's row: schedule Continue for the reset, or show the schedule and Cancel. */
 export function NativeChatUsageLimitAutoResume({
   autoResume
 }: {
