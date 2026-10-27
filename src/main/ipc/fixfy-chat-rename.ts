@@ -1,5 +1,5 @@
 import type { AgentSessionStatusSummary } from '../../shared/agent-session-wire'
-import { normalizeAgentSessionConversationName } from '../../shared/agent-session-conversation-name'
+import { normalizeAgentSessionConversationName } from '../../shared/agent-session/agent-session-conversation-name'
 import type { AgentSessionRecordStore } from '../runtime/agent-session-record-store'
 import type { StructuredAgentSessionStatusObserverOptions } from '../native-chat/agent-session-wire/structured-agent-session-status-observation'
 import { getStructuredAgentSessionHost } from '../native-chat/agent-session-wire/structured-agent-session-registry'

@@ -3,8 +3,10 @@ import type { AgentSessionRecord } from '../../shared/agent-session-record'
 import { agentSessionRecordFixture } from '../../shared/agent-session-record.test-fixture'
 import type { AgentSessionStatusSummary } from '../../shared/agent-session-wire'
 import {
+  type AgentSessionUserNameWrite,
   compareAndSetAgentSessionRecordName,
-  setAgentSessionRecordConversationName
+  setAgentSessionRecordConversationName,
+  setAgentSessionRecordUserNameThrough
 } from '../runtime/agent-session-record-conversation-name'
 import {
   createStructuredChatNamingHandler,
@@ -29,7 +31,9 @@ function rig(firstPrompt: string) {
     setConversationName: (_id: string, name: string | null) =>
       mutate((current) => setAgentSessionRecordConversationName(current, name, Date.now())),
     compareAndSetConversationName: (_id: string, name: string | null, expected: string | null) =>
-      compareAndSetAgentSessionRecordName(mutate, name, expected)
+      compareAndSetAgentSessionRecordName(mutate, name, expected),
+    setUserConversationName: (_id: string, name: string, write: AgentSessionUserNameWrite) =>
+      setAgentSessionRecordUserNameThrough(mutate, name, write)
   }
   let finishGeneration: (result: StructuredChatNameGeneration) => void = () => {}
   const generate = vi.fn(
