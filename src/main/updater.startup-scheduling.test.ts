@@ -53,6 +53,7 @@ describe('updater', () => {
     const { setupAutoUpdater, checkForUpdatesFromMenu, getRemoteServerUpdateSupport } =
       await loadUpdaterModule()
 
+    // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: the updater only sends on webContents, which the stub provides.
     setupAutoUpdater(mainWindow as never, { getLastUpdateCheckAt: () => 0 })
     appMock.emit('browser-window-focus')
     checkForUpdatesFromMenu()

@@ -29,23 +29,19 @@ createHelperApp()
 
 function buildUniversalBinary() {
   const builtBinaries = universalTriples.map((triple) => {
-    const swiftArgs = ['build', '-c', 'release', '--package-path', packagePath, '--triple', triple]
-    run('swift', swiftArgs)
-    // Why copy out: Swift 6.4's default build system writes every triple to one bin path.
-    const binPath = spawnSync('swift', [...swiftArgs, '--show-bin-path'], { encoding: 'utf8' })
-    if (binPath.status !== 0) {
-      process.exit(binPath.status ?? 1)
-    }
-    const sliceBinary = path.join(
+    // SwiftPM 6.4+ swiftbuild default skips the .build/<triple>/release layout lipo reads (#21145)
+    run('swift', [
+      'build',
+      '-c',
+      'release',
+      '--package-path',
       packagePath,
-      '.build',
-      'slices',
+      '--triple',
       triple,
-      'orca-computer-use-macos'
-    )
-    mkdirSync(path.dirname(sliceBinary), { recursive: true })
-    copyFileSync(path.join(binPath.stdout.trim(), 'orca-computer-use-macos'), sliceBinary)
-    return sliceBinary
+      '--build-system',
+      'native'
+    ])
+    return path.join(packagePath, '.build', triple, 'release', 'orca-computer-use-macos')
   })
   mkdirSync(path.dirname(binaryPath), { recursive: true })
   run('lipo', ['-create', ...builtBinaries, '-output', binaryPath])

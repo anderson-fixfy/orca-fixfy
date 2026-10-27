@@ -15,16 +15,17 @@ import { NativeChatCodeBlock } from './NativeChatCodeBlock'
 import { NativeChatCopyButton } from './NativeChatCopyButton'
 import { NativeChatMessageTimestamp } from './NativeChatMessageTimestamp'
 import { NativeChatAgentMessageSenders } from './NativeChatAgentMessageSenders'
-import { NativeChatImageAttachments } from './NativeChatTranscriptChrome'
+import {
+  NativeChatDetailsDisclosure,
+  NativeChatImageAttachments
+} from './NativeChatTranscriptChrome'
 import { NativeChatEditUserMessageContext } from './native-chat-edit-user-message'
 import type { deriveNativeChatRowContent } from '../../../../shared/native-chat-row-content'
 
 const USER_META_REVEAL =
   'transition-opacity can-hover:pointer-events-none can-hover:opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 [.group:has(:focus-visible)_&]:pointer-events-auto [.group:has(:focus-visible)_&]:opacity-100'
 
-/** Under a user message: copy, edit + timestamp, revealed together like the agent controls row.
- *  Until confirmed, a quiet "Sending…" stays visible in the time's place and copy keeps its own
- *  reveal, so the row keeps its height when it clears. Image-only prompts have no text to copy. */
+/** Copy, edit + timestamp; Sending replaces the timestamp without changing row height; image-only prompts offer no text copy. */
 function UserMessageMeta({
   markdown,
   timestamp,
@@ -103,8 +104,7 @@ export function NativeChatUserMessageRow({
   rewind?: NativeChatRewindSurface
   deliveryNotice?: NativeChatDeliveryNotice
 }): React.JSX.Element {
-  // Another agent's message is the agent's turn input too, but is not the person's: it reads
-  // left-aligned under its sender rather than as their bubble.
+  // Agent-authored input belongs to the turn but uses a left-aligned sender row instead of the person’s bubble.
   const from = message.from
   const sending = deliveryNotice?.sending === true
   const edit = useContext(NativeChatEditUserMessageContext)
@@ -126,7 +126,6 @@ export function NativeChatUserMessageRow({
           chatWorktreeId={runtimeContext?.worktreeId ?? null}
         />
       ) : null}
-      {/* A distinct surface separates the user's prompt from the assistant's prose. */}
       <div
         className={cn(
           'max-w-[80%] text-sm',
@@ -187,6 +186,15 @@ export function NativeChatUserMessageRow({
               {translate('components.native-chat.dismissDeliveryNotice', 'Dismiss')}
             </Button>
           ) : null}
+        </div>
+      ) : null}
+      {deliveryNotice?.detail ? (
+        <div className="max-w-[85%]">
+          <NativeChatDetailsDisclosure
+            summary={translate('components.native-chat.notices.details', 'Details')}
+          >
+            {deliveryNotice.detail}
+          </NativeChatDetailsDisclosure>
         </div>
       ) : null}
     </div>
