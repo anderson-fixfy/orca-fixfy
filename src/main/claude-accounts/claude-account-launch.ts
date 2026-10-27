@@ -3,7 +3,7 @@ import {
   CLAUDE_PROFILE_POINTER_ENV
 } from '../../shared/claude-profile-routing'
 import type { ClaudeManagedAccount } from '../../shared/managed-account-types'
-import { isDirectory } from './claude-profile-installed-router'
+import { isDirectory } from './claude-profile-homes'
 import { claudeProfileMissing } from './claude-profile-launch-errors'
 import type { ClaudeProfileRouter } from './claude-profile-router'
 import type { ClaudeRuntimeAuthPreparation } from './runtime-auth/runtime-auth-types'

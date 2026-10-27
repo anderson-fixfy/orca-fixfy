@@ -9,6 +9,7 @@ import {
   structuredCallerFor
 } from './structured-agent-session-gate'
 import { SwitchAccountParams } from './structured-agent-session-schemas'
+import { STRUCTURED_AGENT_SESSION_MESSAGE_FORK_METHODS } from './structured-agent-session-message-fork'
 
 export const STRUCTURED_AGENT_SESSION_SWITCH_ACCOUNT_METHODS = [
   defineMethod({
@@ -21,5 +22,6 @@ export const STRUCTURED_AGENT_SESSION_SWITCH_ACCOUNT_METHODS = [
       const host = requireStructuredSessionHost(ctx, params.envelope.sessionId)
       return host.conversationCommands.switchAccount(structuredCallerFor(ctx), params)
     }
-  })
+  }),
+  ...STRUCTURED_AGENT_SESSION_MESSAGE_FORK_METHODS
 ]

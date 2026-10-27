@@ -4,7 +4,6 @@ import type { AgentSessionStatusSummary } from '../../../../shared/agent-session
 import type { RuntimeClientTarget } from '../../../../shared/runtime-client-target'
 import { getStructuredAgentSessionStatusFeed } from '@/runtime/structured-agent-session-status-feed'
 
-/** The host's projected status for one session, live while the caller is mounted. */
 export function useStructuredAgentSessionStatusSummary(
   sessionId: string,
   target: RuntimeClientTarget
@@ -41,7 +40,7 @@ export function useStructuredAgentSessionOptionStamp(
   )
 }
 
-/** Only the host's startup phase, so a chat re-renders when that changes, not on every status. */
+/** Subscribe only to startup phase changes, avoiding unrelated status renders. */
 export function useStructuredAgentSessionHostExecutionPhase(
   sessionId: string,
   target: RuntimeClientTarget
@@ -69,7 +68,6 @@ export function useStructuredAgentSessionHostStopping(
   )
 }
 
-/** Startup phase, Stop and option stamp, each re-rendering the chat only on a change. */
 export function useStructuredAgentSessionHostExecution(
   sessionId: string,
   target: RuntimeClientTarget
@@ -85,7 +83,7 @@ export function useStructuredAgentSessionHostExecution(
   }
 }
 
-/** Only the host's rewind recovery latch, so a chat re-renders when that changes, not on every status. */
+/** Subscribe only to rewind recovery changes, avoiding unrelated status renders. */
 export function useStructuredAgentSessionRewindBlockedReason(
   sessionId: string,
   target: RuntimeClientTarget

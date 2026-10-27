@@ -1,3 +1,4 @@
+import { getClaudeAgentViewService } from '../claude/agent-view-service'
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
@@ -8,13 +9,13 @@ import {
   CLAUDE_PROFILE_SETUP_FAILED_MESSAGE,
   CLAUDE_USER_CONFIG_DIR_ENV
 } from '../../shared/claude-profile-routing'
-import { claudeProfileMissing, claudeProfileSetupFailed } from './claude-profile-launch-errors'
+import { claudeProfileMissing } from './claude-profile-launch-errors'
+import { readyClaudeProfileForLaunch } from './claude-profile-launch-readiness'
 import type { GlobalSettings } from '../../shared/global-settings-types'
 import { probeRecentClaudeCliVersion } from '../claude/claude-hook-event-versions'
 import { writeFileAtomically } from '../codex-accounts/fs-utils'
 import { resolveClaudeCommand } from '../codex-cli/command'
 import {
-  claudeProfileMarkerPath,
   describeClaudeProfile,
   type ClaudeProfileDescriptor,
   readUserClaudeConfigDir,
@@ -31,7 +32,7 @@ import {
   type ClaudeAccountSelectionTarget
 } from './runtime-selection'
 import { wslClaudeProfilePointer } from './claude-profile-wsl-paths'
-import { isDirectory, listClaudeProfileHomes } from './claude-profile-installed-router'
+import { isDirectory, listClaudeProfileHomes } from './claude-profile-homes'
 import {
   claudeStateFile,
   readClaudeFolderLogin,
@@ -184,21 +185,11 @@ export class ClaudeProfileRouter {
       await this.envReady
       return
     }
-    const profile = this.describe(accountId)
-    // A missing marker means initial setup has not completed.
-    if (!existsSync(claudeProfileMarkerPath(profile))) {
-      const report = await this.setUp(profile).catch(() => null)
-      if (report?.outcome !== 'prepared') {
-        throw claudeProfileSetupFailed()
-      }
-      return
-    }
-    // Run with the previous setup if refreshing fails or exceeds the deadline.
-    const refresh = this.setUp(profile).catch((error: unknown) => {
-      console.warn('[claude-profile] Account refresh failed:', error)
-    })
-    const waitMs = this.args.refreshWaitMs ?? REFRESH_WAIT_MS
-    await Promise.race([refresh, new Promise((resolve) => setTimeout(resolve, waitMs).unref())])
+    await readyClaudeProfileForLaunch(
+      this.describe(accountId),
+      (profile) => this.setUp(profile),
+      this.args.refreshWaitMs ?? REFRESH_WAIT_MS
+    )
   }
 
   settings = (): ClaudeProfileRouterSettings => this.args.getSettings()
@@ -261,6 +252,9 @@ export class ClaudeProfileRouter {
       hooks,
       claudeVersion: claudeVersion ?? undefined
     })
+    if (report.outcome === 'prepared') {
+      await getClaudeAgentViewService(this.args.dataRoot).prepareProfile(profile.home)
+    }
     if (report.outcome === 'refused' || report.warnings.length > 0) {
       console.warn('[claude-profile] Account setup was incomplete:', report)
     }
